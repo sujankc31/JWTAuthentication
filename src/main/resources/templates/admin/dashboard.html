@@ -1,0 +1,724 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.5.0/font/bootstrap-icons.css">
+    <link rel="stylesheet" th:href="@{/css/style.css}" type="text/css">
+    <link th:href="@{/images/favicon.ico?v=1}" rel="shortcut icon" type="image/x-icon">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Font Awesome 6 (Latest) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css"
+        integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+    <!-- Font Awesome 5 (If you need older version) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
+        integrity="sha512-1ycn6IcaQQ40/MKBW2W4Rhis/DbILU74C1vSrLJxCq57o941Ym01SwNsOMqvEBFlcgUa6xLiPY/NS5R+E6ztJQ=="
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        #sidebar-wrapper.collapsed .list-group-item span {
+            display: none;
+        }
+
+        #sidebar-wrapper.collapsed {
+            width: 80px;
+        }
+
+        #sidebar-wrapper.collapsed .sidebar-heading span {
+            display: none;
+        }
+
+        #sidebar-wrapper .list-group-item i {
+            transition: transform 0.3s ease;
+        }
+
+        #sidebar-wrapper.collapsed .list-group-item i {
+            transform: scale(1.2);
+            /* Adjust icon size when collapsed */
+        }
+
+        #sidebar-wrapper.collapsed .list-group-item {
+            position: relative;
+        }
+
+        #sidebar-wrapper.collapsed .list-group-item:hover::after {
+            content: attr(data-tooltip);
+            position: absolute;
+            left: 100%;
+            top: 50%;
+            transform: translateY(-50%);
+            background: #000;
+            color: #fff;
+            padding: 5px;
+            border-radius: 3px;
+            white-space: nowrap;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Success Toast -->
+    <div class="position-fixed top-0 start-50 translate-middle-x p-3" style="z-index: 11">
+        <div id="successToast" class="toast align-items-center text-white bg-success border-0" role="alert"
+            aria-live="assertive" aria-atomic="true">
+            <div class="d-flex">
+                <div class="toast-body" th:text="${successMessage}">
+                    Login Successful
+                </div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"
+                    aria-label="Close"></button>
+            </div>
+        </div>
+    </div>
+
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container">
+            <a class="navbar-brand" href="#">Dashboard</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <span class="nav-link" th:text="${'Welcome, ' + username}">Welcome</span>
+                        <span class="nav-link" th:text="${'Role ' + roles}">Welcome</span>
+
+                    </li>
+                    <li class="nav-item me-2">
+                        <form th:action="@{/logout}" method="post">
+                            <button class="btn btn-outline-light" type="submit">Logout</button>
+                        </form>
+                    </li>
+                    <li class="nav-item">
+                        <form th:action="@{/profile}">
+                            <button class="btn btn-outline-light" type="submit">Profile</button>
+                        </form>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <!-- Sidebar -->
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-sm-3">
+                <!-- Include the sidebar fragment with 'dashboard' as the active item -->
+                <div th:replace="~{fragments/admin-sidebar :: adminSidebar('dashboard')}"></div>
+            </div>
+            <!-- Main content -->
+            <div class="col-sm-9 mt-2">
+                <div class="row">
+                    <div class="col-md-4 mt-2">
+                        <div class="card">
+                            <div class="card-header bg-warning">
+                                <h4>Total Users</h4>
+                            </div>
+                            <div class="card-body text-center">
+                                <span th:if="${totalUserCount != null}">
+                                    <h4> <span th:text="${totalUserCount}"></span></h4>
+                                </span>
+                                <span th:if="${totalUserCount == null}">
+                                    <h4>NULL</h4>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mt-2">
+                        <div class="card">
+                            <div class="card-header bg-success">
+                                <h4>Active Users</h4>
+                            </div>
+                            <div class="card-body text-center">
+                                <span th:if="${activeUserCount != null}">
+                                    <h4> <span th:text="${activeUserCount}"></span></h4>
+                                </span>
+                                <span th:if="${activeUserCount == null}">
+                                    <h4>NULL</h4>
+                                </span>
+                            </div>
+
+                        </div>
+                    </div>
+                    <div class="col-md-4 mt-2">
+                        <div class="card">
+                            <div class="card-header bg-danger">
+                                <h4>Inactive Users</h4>
+                            </div>
+                            <div class="card-body text-center">
+                                <span th:if="${inactiveUserCount != null}">
+                                    <h4> <span th:text="${inactiveUserCount}"></span></h4>
+                                </span>
+                                <span th:if="${inactiveUserCount == null}">
+                                    <h4>NULL</h4>
+                                </span>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+                <div class="container mt-2">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h4 class="card-title">User Activity Stats</h4>
+                                </div>
+                                <div class="card-body">
+                                    <canvas id="pieChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6 ">
+                            <div class="card">
+                                <div class="card-header">
+                                    <h4 class="card-title">Total User Stats</h4>
+                                </div>
+                                <div class="card-body">
+                                    <canvas id="pieChart1"></canvas>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="container mt-2">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="card">
+                                <div class="card-header bg-primary">
+                                    <h4 class="card-title">Users List</h4>
+                                </div>
+                                <div class="card-body table-responsive">
+                                    <div class="d-flex justify-content-between mb-3">
+                                        <div class="me-auto">
+                                            <div class="input-group">
+                                                <input type="text" class="form-control" id="search"
+                                                    placeholder="Search..." onkeyup="searchFunction()"
+                                                    onkeypress="return event.keyCode != 13;">
+                                                <button class="btn btn-outline-secondary" type="button"
+                                                    id="button-addon2" onclick="searchFunction()">Search</button>
+                                            </div>
+
+                                        </div>
+                                        <div class="ms-auto">
+                                            <select class="form-select" id="inlineSelectOptions"
+                                                aria-label="Default select example">
+                                                <option value="10">10</option>
+                                                <option value="20">20</option>
+                                                <option value="50" selected>50</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <table class="table table-striped table-responsive table-hover" id="userTable">
+                                        <thead>
+                                            <tr>
+                                                <th class="text-nowrap">S.N.</th>
+                                                <th class="text-nowrap">ID</th>
+                                                <th class="text-nowrap">Username</th>
+                                                <th class="text-nowrap">Email</th>
+                                                <th class="text-nowrap">Roles</th>
+                                                <th class="text-nowrap">Created At</th>
+                                                <th class="text-nowrap">Last Login</th>
+                                                <th class="text-nowrap">Status</th>
+                                                <th class="text-nowrap">Actions</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr th:each="user, userStat : ${users}">
+                                                <td th:text="${userStat.count}">S.N.</td>
+                                                <td th:text="${user.id}">ID</td>
+                                                <td th:text="${user.username}">Username</td>
+                                                <td th:text="${user.email}">Email</td>
+                                                <td><button type="button" class="btn btn-sm btn-primary" disabled
+                                                        th:text="${#strings.listJoin(user.roles, ', ')}">Roles</button>
+                                                </td>
+                                                <td th:text="${#temporals.format(user.createdAt, 'yyyy-MM-dd HH:mm')}">
+                                                    Created</td>
+                                                <td
+                                                    th:text="${user.updatedAt != null ? #temporals.format(user.updatedAt, 'yyyy-MM-dd HH:mm') : '-'}">
+                                                    Updated</td>
+                                                <td><span class="badge rounded-pill"
+                                                        th:classappend="${user.isActive ? 'bg-success' : 'bg-danger'}"
+                                                        th:text="${user.isActive ? 'Active' : 'Inactive'}">Status</span>
+                                                </td>
+                                                <td>
+                                                    <div class="btn-group gap-1">
+                                                        <button type="button" class="btn btn-sm btn-info"
+                                                            data-bs-toggle="modal" data-bs-target="#changePasswordModal"
+                                                            th:attr="data-user-id=${user.id}">Change Password</button>
+                                                        <button type="button" class="btn btn-sm"
+                                                            th:classappend="${user.isActive ? 'btn-danger' : 'btn-success'}"
+                                                            data-bs-toggle="modal" data-bs-target="#activateModal"
+                                                            th:attr="data-user-id=${user.id}"
+                                                            th:text="${user.isActive ? 'Inactivate' : 'Activate'}">Change
+                                                            Status</button>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                    <nav aria-label="User pagination">
+                                        <ul class="pagination pagination-circle justify-content-center">
+                                            <li class="page-item">
+                                                <a class="page-link" href="#" aria-label="Previous">
+                                                    <i class="fas fa-chevron-left"></i>
+                                                </a>
+                                            </li>
+                                            <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                                            <li class="page-item"><a class="page-link" href="#">2</a></li>
+                                            <li class="page-item"><a class="page-link" href="#">3</a></li>
+                                            <li class="page-item">
+                                                <a class="page-link" href="#" aria-label="Next">
+                                                    <i class="fas fa-chevron-right"></i>
+                                                </a>
+                                            </li>
+                                        </ul>
+                                    </nav>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- modal for activate/deactivate user -->
+                <div class="modal fade" id="activateModal" tabindex="-1" aria-labelledby="activateModalLabel"
+                    aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="activateModalLabel">Are you sure?</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                    aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <p>Are you sure you want to <span id="activateModalAction"></span> this user?</p>
+                            </div>
+                            <div class="modal-footer">
+                                <form id="statusChangeForm" method="post">
+                                    <button type="submit" class="btn btn-primary">Yes</button>
+                                </form>
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <!-- modal for change password -->
+                <div class="modal fade" id="changePasswordModal" tabindex="-1"
+                    aria-labelledby="changePasswordModalLabel" aria-hidden="true" data-bs-backdrop="static"
+                    data-bs-keyboard="false">
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header d-flex justify-content-center align-items-center bg-primary text-white">
+                                <h5 class="modal-title" id="changePasswordModalLabel">Change Password</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                    aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <!-- Message Display -->
+                                <div id="messageArea">
+                                </div>
+                                <form id="changePasswordForm">
+                                    <input type="hidden" name="userId" id="userId" />
+                                    <div class="mb-3">
+                                        <label for="password" class="form-label">New Password</label>
+                                        <div class="input-group">
+                                            <input type="password" class="form-control" id="newPassword"
+                                                name="newPassword" aria-describedby="passwordHelp" required
+                                                oninput="validateNewPassword()" />
+                                            <button class="btn btn-outline-secondary" type="button"
+                                                id="toggleNewPassword" onclick="togglePasswordVisibility(event)">
+                                                <i class="fas fa-eye"></i>
+                                            </button>
+                                        </div>
+                                        <div id="newPasswordError" style="display: none; color: red;"></div>
+                                    </div>
+                                    <script>
+
+                                    </script>
+                                    <div class="mb-3">
+                                        <label for="confirmPassword" class="form-label">Confirm Password</label>
+                                        <input type="password" class="form-control" id="confirmPassword" oninput="validateConfirmPassword()"
+                                            name="confirmPassword" aria-describedby="confirmPasswordHelp" required />
+                                    </div>
+                                    <div id="confirmPasswordError" style="display: none; color: red;"></div>
+                                    <div class="d-flex justify-content-end">
+                                        <button type="submit" class="btn btn-primary btn-sm">Change Password</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Bootstrap JS Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+
+
+            fetch('/user/users-stats')
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    const activeUsers = data.activeUsers;
+                    const inactiveUsers = data.inactiveUsers;
+                    const totalUsers = data.totalUsers;
+                    updatePieChart(activeUsers, inactiveUsers);
+                    updatePieChart1(totalUsers);
+                })
+                .catch(error => console.error('Error fetching user stats:', error));
+        });
+        function updatePieChart(activeUsers, inactiveUsers) {
+            const ctx = document.getElementById('pieChart').getContext('2d');
+            const pieChart = new Chart(ctx, {
+                type: 'pie',
+                data: {
+                    labels: ['Active Users', 'Inactive Users'],
+                    datasets: [{
+                        data: [activeUsers, inactiveUsers],
+                        backgroundColor: [
+
+                            'rgba(40, 167, 69, 0.8)',  // green for active
+                            'rgba(255, 0, 0, 1)'   // red for inactive
+                        ],
+                        borderColor: [
+                            'rgba(40, 167, 69, 1)',
+                            'rgba(255, 0, 0, 1)'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function (context) {
+                                    const label = context.label || '';
+                                    const value = context.raw;
+                                    const total = context.dataset.data.reduce((acc, data) => acc + data, 0);
+                                    const percentage = Math.round((value / total) * 100);
+                                    return `${label}: ${value} (${percentage}%)`;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+        function updatePieChart1(totalUsers) {
+            const ctx = document.getElementById('pieChart1').getContext('2d');
+            const pieChart = new Chart(ctx, {
+                type: 'pie',
+                data: {
+                    labels: ['Total Users'],
+                    datasets: [{
+                        data: [totalUsers],
+                        backgroundColor: [
+                            'rgba(40, 167, 69, 0.8)',  // green for active
+                        ],
+                        borderColor: [
+                            'rgba(40, 167, 69, 1)'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function (context) {
+                                    const label = context.label || '';
+                                    const value = context.raw;
+                                    const total = context.dataset.data.reduce((acc, data) => acc + data, 0);
+                                    const percentage = Math.round((value / total) * 100);
+                                    return `${label}: ${value} (${percentage}%)`;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', function () {
+            const activateModal = document.getElementById('activateModal');
+
+            if (activateModal) {
+                activateModal.addEventListener('show.bs.modal', function (event) {
+                    // Get the button that triggered the modal
+                    const button = event.relatedTarget;
+
+                    // Extract user ID from data attribute
+                    const userId = button.getAttribute('data-user-id');
+
+                    // Only proceed if this is a status change button (not password button)
+                    if (button.classList.contains('btn-danger') || button.classList.contains('btn-success')) {
+                        // Determine action text (Activate or Inactivate)
+                        const actionText = button.textContent;
+
+                        // Update the modal's content
+                        const actionSpan = document.getElementById('activateModalAction');
+                        actionSpan.textContent = actionText.toLowerCase();
+
+                        // Update the form action
+                        const form = document.getElementById('statusChangeForm');
+                        form.action = `/user/change-user-status/${userId}`;
+                    }
+                });
+
+                // Handle form submission with fetch API
+                document.getElementById('statusChangeForm').addEventListener('submit', function (e) {
+                    e.preventDefault();
+
+                    const userId = this.action.split('/').pop();
+
+                    fetch(`/user/change-user-status/${userId}`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        }
+                    })
+                        .then(response => {
+                            if (!response.ok) {
+                                throw new Error('Network response was not ok');
+                            }
+                            return response.json();
+                        })
+                        .then(newStatus => {
+                            // Close the modal
+                            const modal = bootstrap.Modal.getInstance(activateModal);
+                            modal.hide();
+
+                            // Find only the status button that opened the modal
+                            const button = document.querySelector(`button[data-user-id="${userId}"][class*="btn-danger"], button[data-user-id="${userId}"][class*="btn-success"]`);
+
+                            // Update button text and class based on new status
+                            if (newStatus) {
+                                button.textContent = 'Inactivate';
+                                button.classList.remove('btn-success');
+                                button.classList.add('btn-danger');
+                            } else {
+                                button.textContent = 'Activate';
+                                button.classList.remove('btn-danger');
+                                button.classList.add('btn-success');
+                            }
+
+                            // Don't use alert, which blocks the UI
+                            // Instead, show a toast or notification that auto-dismisses
+                            showNotification('User status updated successfully');
+                            // Refresh the browser after a short delay
+                            setTimeout(() => {
+                                window.location.reload();
+                            }, 1000);
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                            showNotification('Error updating user status', 'error');
+                        });
+                });
+            }
+        });
+
+        // Add this function to show a non-blocking notification
+        function showNotification(message, type = 'success') {
+            // Create notification element
+            const notification = document.createElement('div');
+            notification.style.position = 'fixed';
+            notification.style.top = '20px';
+            notification.style.right = '20px';
+            notification.style.padding = '15px 20px';
+            notification.style.borderRadius = '4px';
+            notification.style.zIndex = '9999';
+            notification.style.backgroundColor = type === 'success' ? '#4CAF50' : '#F44336';
+            notification.style.color = 'white';
+            notification.style.boxShadow = '0 2px 5px rgba(0,0,0,0.2)';
+            notification.textContent = message;
+
+            // Add to document
+            document.body.appendChild(notification);
+
+            // Auto dismiss after 3 seconds
+            setTimeout(() => {
+                notification.style.opacity = '0';
+                notification.style.transition = 'opacity 0.5s';
+                setTimeout(() => {
+                    document.body.removeChild(notification);
+                }, 500);
+            }, 2000);
+        }
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script th:inline="javascript">
+        document.addEventListener('DOMContentLoaded', function () {
+            var successMessage = /*[[${successMessage}]]*/ null;
+
+            if (successMessage) {
+                var successToast = new bootstrap.Toast(document.getElementById('successToast'), {
+                    delay: 2000 // Auto-hide after 1 second
+                });
+                successToast.show();
+            }
+        });
+
+        /**
+         * Search function for the user table. It iterates over all table rows,
+         * gets the first cell text content, and checks if it matches the filter.
+         * If it does, the row is displayed, otherwise it is hidden.
+         */
+        function searchFunction() {
+            const searchInput = document.getElementById("search");
+            const filter = searchInput.value.toUpperCase();
+            const table = document.getElementById("userTable");
+            const rows = table.getElementsByTagName("tr");
+            for (let i = 0; i < rows.length; i++) {
+                const firstCell = rows[i].getElementsByTagName("td")[0];
+                if (firstCell) {
+                    const textValue = firstCell.textContent || firstCell.innerText;
+                    if (textValue.toUpperCase().includes(filter)) {
+                        rows[i].style.display = "";
+                    } else {
+                        rows[i].style.display = "none";
+                    }
+                }
+            }
+        }
+        const changePasswordModal = document.getElementById('changePasswordModal');
+
+        changePasswordModal.addEventListener('show.bs.modal', function (event) {
+            const button = event.relatedTarget;
+            const userId = button.getAttribute('data-user-id');
+            document.getElementById('userId').value = userId;
+        });
+
+        const form = document.getElementById('changePasswordForm');
+        form.addEventListener('submit', async function (e) {
+            e.preventDefault();
+
+            const userId = document.getElementById('userId').value;
+            const newPassword = document.getElementById('newPassword').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            const messageArea = document.getElementById('messageArea');
+
+            try {
+                const response = await fetch(`/user/change-password/${userId}`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: new URLSearchParams({
+                        newPassword: newPassword,
+                        confirmPassword: confirmPassword
+                    })
+                });
+
+                const message = await response.text();
+
+                if (response.ok) {
+                    messageArea.innerHTML = `<div class="alert alert-success">${message}</div>`;
+                    form.reset();
+
+                    // Optional: Auto close modal after 2 seconds
+                    setTimeout(() => {
+                        const modal = bootstrap.Modal.getInstance(changePasswordModal);
+                        modal.hide();
+                        window.location.reload();
+                    }, 1000);
+                } else {
+                    messageArea.innerHTML = `<div class="alert alert-danger">${message}</div>`;
+                }
+
+            } catch (error) {
+                messageArea.innerHTML = `<div class="alert alert-danger">An error occurred. Please try again.</div>`;
+            }
+        });
+        /**
+         * Toggle the visibility of the password input field when the toggle button is clicked.
+         * The button will be an element with a class of 'input-group' containing an input field
+         * and an icon element. The icon element's class will be toggled between 'fa-eye' and
+         * 'fa-eye-slash' and the input field's type will be toggled between 'password' and 'text'.
+         * @param {Event} event The click event of the toggle button.
+         */
+        function togglePasswordVisibility(event) {
+            const passwordInput = event.target.closest('.input-group').querySelector('input');
+            const icon = event.target.querySelector('i');
+            if (passwordInput.type === 'password') {
+                passwordInput.type = 'text';
+                icon.classList.remove('fa-eye');
+                icon.classList.add('fa-eye-slash');
+            } else {
+                passwordInput.type = 'password';
+                icon.classList.remove('fa-eye-slash');
+                icon.classList.add('fa-eye');
+            }
+        }
+        function validateNewPassword(event) {
+            const newPassword = document.getElementById('newPassword').value;
+            const newPasswordError = document.getElementById('newPasswordError');
+            const hasLetter = /[a-z]/.test(newPassword);
+            const hasUpperCase = /[A-Z]/.test(newPassword);
+            const hasSpecial = /[!@#$%^&*(),.?":{}|<>\-_+=]/.test(newPassword);
+            const hasLength = newPassword.length >= 6 && newPassword.length <= 40;
+            const confirmPasswordError =document.getElementById('confirmPasswordError');
+            const validationMessage = [];
+            if (!hasLetter) {
+                validationMessage.push('Password must contain at least one lowercase letter');
+            }
+            if (!hasUpperCase) {
+                validationMessage.push('Password must contain at least one uppercase letter');
+            }
+            if (!hasSpecial) {
+                validationMessage.push('Password must contain at least one special character');
+            }
+            if (!hasLength) {
+                validationMessage.push('Password must be between 6 and 40 characters long');
+            }
+            if (validationMessage.length > 0) {
+                newPasswordError.innerText = validationMessage.join('\n');
+                newPasswordError.style.display = 'block';
+            } else {
+                newPasswordError.style.display = 'none';
+            }
+        }
+        function validateConfirmPassword(event) {
+            const newPassword = document.getElementById('newPassword').value;
+            const confirmPassword = document.getElementById('confirmPassword').value;
+            const confirmPasswordError = document.getElementById('confirmPasswordError');
+            if (newPassword !== confirmPassword) {
+                confirmPasswordError.innerText = 'Passwords do not match';
+                confirmPasswordError.style.display = 'block';
+            } else {
+                confirmPasswordError.innerText = 'Passwords match';
+                confirmPasswordError.style.color = 'green';
+                confirmPasswordError.style.display = 'block';
+            }
+        }
+    </script>
+    <script>
+        document.getElementById('menu-toggle').addEventListener('click', function () {
+            document.getElementById('sidebar-wrapper').classList.toggle('collapsed');
+        });
+    </script>
+</body>
+<footer>
+    <div th:replace="fragments/footer :: footer"></div>
+</footer>
+
+</html>

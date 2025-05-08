@@ -58,16 +58,24 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     }
 
     @Override
-    public void changePassword(String username, String oldPassword, String newPassword) {
-        User user = userRepository.findByUsername(username)
+    public void resetUserPassword(Long id, String newPassword) {
+        User user = userRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("User not found"));
-
-        // Validate old password
-        if (!passwordEncoder.matches(oldPassword, user.getPassword())) {
-            throw new RuntimeException("Invalid current password");
+        
+        // Validate new password
+        if (newPassword == null || newPassword.length() < 8) {
+            throw new RuntimeException("Password must be at least 8 characters long");
         }
-
-        // Encode and set new password
+        
+        // Check for complexity requirements
+        boolean hasLetter = newPassword.matches(".*[a-zA-Z].*");
+        boolean hasDigit = newPassword.matches(".*\\d.*");
+        boolean hasSpecial = newPassword.matches(".*[^a-zA-Z0-9].*");
+        
+        if (!(hasLetter && hasDigit && hasSpecial)) {
+            throw new RuntimeException("Password must contain at least one letter, one number, and one special character");
+        }
+        
         user.setPassword(passwordEncoder.encode(newPassword));
         userRepository.save(user);
     }

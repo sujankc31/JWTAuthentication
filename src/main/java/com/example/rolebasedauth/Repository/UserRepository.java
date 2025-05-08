@@ -28,6 +28,18 @@ public interface UserRepository extends JpaRepository<User, Long> {
     List<User> findUsersByRoleName(Role.ERole roleName);
     
     // Count methods
+    @Query(value = "SELECT COUNT(*) FROM users WHERE is_active = 0", nativeQuery = true)
+    Integer countInactiveUsers();
+
+    @Query(value = "SELECT COUNT(*) FROM users WHERE is_active = 1", nativeQuery = true)
+    Integer countActiveUsers();
+
+
+    @Query(value = "SELECT COUNT(*) FROM users", nativeQuery = true)
+    Integer countTotalUsers();
+
+
     long countByIsActiveTrue();
     long countByIsActiveFalse();
+    
 }

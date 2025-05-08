@@ -7,6 +7,7 @@ import com.example.rolebasedauth.Repository.RoleRepository;
 import com.example.rolebasedauth.Service.RoleService;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -40,9 +41,21 @@ public class RoleServiceImpl implements RoleService {
 
     @Override
     public void createRole(Role role) {
-        roleRepository.save(role);
+        try {
+            if (!role.getName().name().matches("ROLE_[A-Z]+")) {
+                throw new IllegalArgumentException("Role name must be in the format ROLE_{NAME}");
+            }
+            if (!role.getDescription().matches("[a-zA-Z0-9 ]*")) {
+                throw new IllegalArgumentException("Description must contain only alphanumeric characters and spaces");
+            }
+            roleRepository.save(role);
+        } catch (DataIntegrityViolationException e) {
+            throw new RuntimeException("Role already exists: " + role.getName(), e);
+        } catch (Exception e) {
+            throw new RuntimeException("Error creating role: " + role.getName(), e);
+        }
     }
-
+ 
     @Override
     public Optional<Role> findByName(Role.ERole roleName) {
         return roleRepository.findByName(roleName);

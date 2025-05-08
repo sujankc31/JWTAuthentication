@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Admin Dashboard</title>
+</head>
+<body>
+    <h1>Admin Dashboard</h1>
+    <div>
+        <h3>InActive Users: <span th:text="${inactiveUserCount}"></span></h3>
+        <h3>Active Users: <span th:text="${activeUserCount}"></span></h3>
+        <h3>Total Users: <span th:text="${totalUserCount}"></span></h3>
+    </div>
+</body>
+</html>

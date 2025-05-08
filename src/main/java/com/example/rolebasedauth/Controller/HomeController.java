@@ -3,14 +3,20 @@ package com.example.rolebasedauth.Controller;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import jakarta.servlet.ServletException;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -22,6 +28,8 @@ import com.example.rolebasedauth.Entity.Role;
 import com.example.rolebasedauth.Entity.Role.ERole;
 import com.example.rolebasedauth.Entity.User;
 import com.example.rolebasedauth.Service.UserService;
+import com.example.rolebasedauth.Service.RoleService;
+
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -34,14 +42,17 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @Controller
 public class HomeController {
 
+    @Autowired
+    private final RoleService roleService;
     private final UserService userService;
     private final BCryptPasswordEncoder passwordEncoder;
     private final UserRepository userRepository;
     @Autowired
     private AuthenticationManager authenticationManager;
 
-
-    public HomeController(UserService userService, BCryptPasswordEncoder passwordEncoder, UserRepository userRepository) {
+    
+    public HomeController(UserService userService,RoleService roleService, BCryptPasswordEncoder passwordEncoder, UserRepository userRepository) {
+        this.roleService = roleService;
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.userService = userService;
@@ -97,19 +108,45 @@ public class HomeController {
         // SecurityContext
         SecurityContextHolder.getContext().setAuthentication(auth);
 
+        // Update last login
+        userService.updateLastLogin(username);
         // If login success
         redirectAttributes.addFlashAttribute("successMessage", "Login Successful");
         redirectAttributes.addFlashAttribute("ErrorMessage","Login Unsuccessful");
         redirectAttributes.addFlashAttribute("user", user); // Pass user info if needed
         model.addAttribute("message", "Login Successful");
         model.addAttribute("user", user); // Pass user info if needed
-        return "redirect:/dashboard"; // Redirect after successful login
+
+        // Redirect based on user role
+        if (userRoles != null && userRoles.contains(ERole.ROLE_ADMIN)) {
+            return "redirect:/admin/dashboard";
+        } else if (userRoles != null && userRoles.contains(ERole.ROLE_MODERATOR)) {
+            return "redirect:/dashboard";
+        } else {
+            return "redirect:/dashboard";
+        }
+       // Redirect after successful login
     }
 
-    // @GetMapping("/register")
-    // public String register() {
-    // return "register";
-    // }
+    @GetMapping("admin/usermanagement")
+    public String userList(Model model, Authentication authentication) {
+        List<Role> roles = roleService.getAllRoles();
+        model.addAttribute("allRoles", roles);
+        List<UserDto> users = userService.getAllUsers();
+        model.addAttribute("username", authentication.getName());
+        model.addAttribute("users", users);
+        model.addAttribute("roles", authentication.getAuthorities());
+        return "admin/userList";
+    }
+
+    @GetMapping("admin/rolemanagement")
+    public String roleList(Model model, Authentication authentication) {
+        List<Role> allroles = roleService.getAllRoles();
+        model.addAttribute("username", authentication.getName());
+        model.addAttribute("allRoles", allroles);
+        model.addAttribute("roles", authentication.getAuthorities());
+        return "admin/roleList";
+    }
 
     // In your controller method that handles the register page
     @GetMapping("/register")
@@ -119,8 +156,12 @@ public class HomeController {
     }
 
     @PostMapping("/register")
-    public String createUser(@ModelAttribute UserCreateDto userCreateDto) {
-        userService.createUser(userCreateDto);
+    public String createUser(@ModelAttribute UserCreateDto userCreateDto, RedirectAttributes redirectAttributes) {
+        if (userService.createUser(userCreateDto) != null) {
+            redirectAttributes.addFlashAttribute("successMessage1", "Registration successful, please login to access the system");
+        } else {
+            redirectAttributes.addFlashAttribute("errorMessage1", "Registration unsuccessful, please try again");
+        }
         return "redirect:/custom-login";
     }
 
@@ -138,8 +179,75 @@ public class HomeController {
     public String dashboard(Model model, Authentication authentication) {
         model.addAttribute("username", authentication.getName());
         model.addAttribute("roles", authentication.getAuthorities());
+        // Fetch user details from service by username
+         UserDto user = userService.getUserByUsername(authentication.getName()); 
+        model.addAttribute("user", user);
+
         return "dashboard";
     }
+
+    @GetMapping("/profile")
+    public String profile(Model model, Authentication authentication) {
+        model.addAttribute("username", authentication.getName());
+        model.addAttribute("roles", authentication.getAuthorities());
+        // Fetch user details from service by username
+         UserDto user = userService.getUserByUsername(authentication.getName()); 
+        model.addAttribute("user", user);
+
+        return "profile";
+    }
+
+    @GetMapping("/user-stats")
+    public Map<String, Integer> getUserStats() {
+        Map<String, Integer> stats = new HashMap<>();
+        stats.put("totalUsers", userService.getTotalUsers());
+        stats.put("activeUsers", userService.getTotalActiveUsers());
+        stats.put("inactiveUsers", userService.getTotalInactiveUsers());
+        return stats;
+    }
+    @GetMapping("/admin/dashboard")
+    public String admin_dashboard(Model model, Authentication authentication) {
+        List<UserDto> users = userService.getAllUsers();
+        model.addAttribute("users", users);
+        // Add active user count to model
+        addInactiveUserCountToModel(model);
+        addTotalUserCountToModel(model);
+        addActiveUserCountToModel(model);
+        model.addAttribute("username", authentication.getName());
+        model.addAttribute("roles", authentication.getAuthorities());
+        return "admin/dashboard";
+    }
+
+    // Method to add active user count to model
+    private void addActiveUserCountToModel(Model model) {
+        Integer activeUserCount = userService.getTotalActiveUsers();
+        model.addAttribute("activeUserCount", activeUserCount);
+    }
+    private void addInactiveUserCountToModel(Model model) {
+        Integer inactiveUserCount = userService.getTotalInactiveUsers();
+        model.addAttribute("inactiveUserCount", inactiveUserCount);
+    }
+    private void addTotalUserCountToModel(Model model) {
+        Integer totalUserCount = userService.getTotalUsers();
+        model.addAttribute("totalUserCount", totalUserCount);
+    }
+
+    @GetMapping("/rolemanagement")
+    public String RoleManagement(Model model, Authentication authentication) {
+        model.addAttribute("username", authentication.getName());
+        model.addAttribute("roles", authentication.getAuthorities());
+        return "admin/roleList";
+    }
+@PostMapping("/aadmin/add-role")
+public String createRole(@ModelAttribute Role role, RedirectAttributes redirectAttributes) {
+    try {
+        roleService.createRole(role);
+        redirectAttributes.addFlashAttribute("successMessage", "Role added successfully!");
+    } catch (Exception e) {
+        redirectAttributes.addFlashAttribute("errorMessage", "Error adding role: " + e.getMessage());
+    }
+    return "redirect:/admin/rolemanagement";
+}
 
     @GetMapping("/homepage")
     public String index(Model model) throws IOException, ServletException {
@@ -166,4 +274,47 @@ public class HomeController {
         model.addAttribute("errorMessage", e.getMessage() != null ? e.getMessage() : "An unexpected error occurred");
         return "error";
     }
+
+    @GetMapping("/total-users")
+    public ResponseEntity<Integer> getTotalUsers() {
+        Integer count = userService.getTotalUsers();
+        System.out.println("===============" );
+        System.out.println("Total users: " + count);
+        System.out.println("===============" );
+        return ResponseEntity.ok(count);
+    }
+
+    //Edit profile of user by themself
+    @PostMapping("/edit-profile")
+    public String editProfile(@AuthenticationPrincipal User user, Model model, @RequestParam(name = "email", required = false) String email, RedirectAttributes redirectAttributes) {
+        try {
+            userService.editProfile(user, email);
+            redirectAttributes.addFlashAttribute("successMessage", "Profile updated successfully!");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("errorMessage", "Error updating profile: " + e.getMessage());
+        }
+        return "redirect:/profile";
+    }
+
+
+
+    // @GetMapping("/total-active-users")
+    // public ResponseEntity<Long> getTotalActiveUsers() {
+    //     Long count = userService.getTotalActiveUsers();
+    //     System.out.println("===============" );
+    //     System.out.println("Total Active users: " + count);
+    //     System.out.println("===============" );
+    //     return ResponseEntity.ok(count);
+    // }
+      
+    @PostMapping("admin/edit-user")
+    public ResponseEntity<UserDto> editUser(@ModelAttribute UserDto userDto) {
+        try {
+            UserDto user = userService.editUser(userDto);
+            return ResponseEntity.ok(user);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+        }
+    }
+
 }

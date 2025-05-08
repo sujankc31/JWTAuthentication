@@ -15,4 +15,11 @@ public class CustomErrorController implements ErrorController {
         }
         return "error";
     }
+
+    
+    @RequestMapping("/page-not-found")
+    public String handleNotFound(Model model) {
+        model.addAttribute("errorMessage", "The page you are looking for might have been removed, had its name changed, or is temporarily unavailable.");
+        return "404";
+    }
 }

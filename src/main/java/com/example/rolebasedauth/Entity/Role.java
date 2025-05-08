@@ -20,7 +20,6 @@ public class Role {
 
     @Column(name = "description")
     private String description;
-
     public enum ERole {
         ROLE_USER("Standard User"),
         ROLE_MODERATOR("Content Moderator"),

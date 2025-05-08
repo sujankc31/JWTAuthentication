@@ -1,50 +1,64 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
+
 <head th:replace="fragments/header :: header">
     <meta charset="UTF-8">
     <title>Register</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     <link rel="stylesheet" th:href="@{/css/style.css}">
+    <link th:href="@{/images/favicon.ico?v=1}" rel="shortcut icon" type="image/x-icon">
 </head>
 <style>
     body {
-    background-color: #f8f9fa;
-}
+        background-color: #f8f9fa;
+    }
 
-.card {
-    border: none;
-    transition: all 0.3s ease;
-}
+    .card {
+        border: none;
+        transition: all 0.3s ease;
+    }
 
-.card:hover {
-    transform: translateY(-5px);
-}
+    .card:hover {
+        transform: translateY(-5px);
+    }
 
-.btn-primary {
-    transition: all 0.3s ease;
-}
+    .btn-primary {
+        transition: all 0.3s ease;
+    }
 
-.btn-primary:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-}
+    .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    }
 
-.form-control:focus {
-    border-color: #0d6efd;
-    box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
-}
+    .form-control:focus {
+        border-color: #0d6efd;
+        box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+    }
 
-.card-header {
-    border-bottom: none;
-    border-radius: 0.5rem 0.5rem 0 0 !important;
-}
+    .card-header {
+        border-bottom: none;
+        border-radius: 0.5rem 0.5rem 0 0 !important;
+    }
 
-.text-decoration-none:hover {
-    color: #0d6efd !important;
-}
-    </style>
+    .text-decoration-none:hover {
+        color: #0d6efd !important;
+    }
+</style>
+
 <body class="bg-light">
+     <!-- Error Toast -->
+     <div class="position-fixed top-0 start-50 translate-middle-x p-3" style="z-index: 11">
+        <div id="errorToast" class="toast align-items-center text-white bg-danger border-0" role="alert" aria-live="assertive" aria-atomic="true">
+            <div class="d-flex">
+                <div class="toast-body" th:text="${errorMessage1}">
+                    Registration Failed
+                </div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+            </div>
+        </div>
+    </div>
     <div class="container">
         <div class="row justify-content-center mt-5">
             <div class="col-md-6">
@@ -63,10 +77,10 @@
                                 <label for="username" class="form-label">
                                     <i class="fas fa-user me-2"></i>Username
                                 </label>
-                                <input type="text" class="form-control" id="username" name="username" 
-                                       required pattern="^[a-z0-9]{3,20}$">
+                                <input type="text" class="form-control" id="username" name="username" required
+                                    pattern="^[a-z0-9]{6,20}$">
                                 <div class="invalid-feedback">
-                                    Username must be lowercase letters and be between 3 and 20 characters 
+                                    Username must be lowercase letters and be between 6 and 20 characters
                                 </div>
                             </div>
                             <div class="mb-3">
@@ -83,20 +97,23 @@
                                     <i class="fas fa-lock me-2"></i>Password
                                 </label>
                                 <div class="input-group">
-                                    <input type="password" class="form-control" id="password" name="password" 
-                                           required minlength="8">
+                                    <input type="password" class="form-control" id="password" name="password" required
+                                        minlength="8">
                                     <button class="btn btn-outline-secondary" type="button" id="togglePassword">
                                         <i class="fas fa-eye"></i>
                                     </button>
+                                    <div class="invalid-feedback">
+                                        Password must be at least 8 characters long
+                                    </div>
                                 </div>
-                                <div class="form-text">Password must be at least 8 characters long</div>
+
                             </div>
                             <div class="mb-4">
                                 <label for="confirm_password" class="form-label">
                                     <i class="fas fa-lock me-2"></i>Confirm Password
                                 </label>
-                                <input type="password" class="form-control" id="confirm_password" 
-                                       name="confirm_password" required>
+                                <input type="password" class="form-control" id="confirm_password"
+                                    name="confirm_password" required>
                                 <div class="invalid-feedback">
                                     Passwords do not match
                                 </div>
@@ -120,47 +137,221 @@
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        // Password visibility toggle
-        document.getElementById('togglePassword').addEventListener('click', function() {
-            const passwordInput = document.getElementById('password');
-            const icon = this.querySelector('i');
+        document.addEventListener('DOMContentLoaded', function () {
             
-            if (passwordInput.type === 'password') {
-                passwordInput.type = 'text';
-                icon.classList.remove('fa-eye');
-                icon.classList.add('fa-eye-slash');
-            } else {
-                passwordInput.type = 'password';
-                icon.classList.remove('fa-eye-slash');
-                icon.classList.add('fa-eye');
+            // To show error toast if registration fails
+            var errorMessage = /*[[${errorMessage}]]*/ null;
+            if (errorMessage) {
+                var errorToast = new bootstrap.Toast(document.getElementById('errorToast'), {
+                    delay: 2000 // Auto-hide after 2 second
+                });
+                errorToast.show();
             }
-        });
+            // Get form elements
+            const form = document.querySelector('.needs-validation');
+            const username = document.getElementById('username');
+            const email = document.getElementById('email');
+            const password = document.getElementById('password');
+            const confirmPassword = document.getElementById('confirm_password');
 
-        // Form validation
-        (function () {
-            'use strict'
-            const forms = document.querySelectorAll('.needs-validation')
-            Array.from(forms).forEach(form => {
-                form.addEventListener('submit', event => {
-                    if (!form.checkValidity()) {
-                        event.preventDefault()
-                        event.stopPropagation()
+            // Password visibility toggle
+            document.getElementById('togglePassword').addEventListener('click', function () {
+                const passwordInput = document.getElementById('password');
+                const icon = this.querySelector('i');
+                const isPassword = passwordInput.type === 'password';
+
+                passwordInput.type = isPassword ? 'text' : 'password';
+                icon.classList.toggle('fa-eye', !isPassword);
+                icon.classList.toggle('fa-eye-slash', isPassword);
+            });
+
+            // Live validation for username
+            username.addEventListener('input', function () {
+                this.value = this.value.toLowerCase();
+                clearError(this);
+                if (!this.value) {
+                    showError(this, 'Username is required');
+                } else {
+                    if (!/^[a-z0-9_]+$/i.test(this.value)) {
+                        showError(this, 'Underscore (_) is only allowed as special character');
+                    }  else if (!/\d/.test(this.value)) {
+                        showError(this, 'Username must contain at least one number');
+                    } else if (this.value.length < 6 || this.value.length > 20) {
+                        showError(this, 'Username must be between 6-20 characters long');
+                    } else if (!/[a-z]/.test(this.value)) {
+                        showError(this, 'Username must contain at least one lowercase letter');
+                    } else {
+                        clearError(this);
                     }
-                    form.classList.add('was-validated')
-                }, false)
-            })
-        })()
+                }
+            });
 
-        // Password match validation
-        const password = document.getElementById('password');
-        const confirmPassword = document.getElementById('confirm_password');
-        confirmPassword.addEventListener('input', function() {
-            if (password.value !== this.value) {
-                this.setCustomValidity('Passwords do not match');
-            } else {
-                this.setCustomValidity('');
+            // Live validation for email
+                email.addEventListener('input', function () {
+                const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                if (!this.value) {
+                    showError(this, 'Email is required');
+                } else if (!regex.test(this.value)) {
+                    showError(this, 'Please enter a valid email address');
+                } else {
+                    clearError(this);
+                }
+            });
+
+            // Live validation for password
+            // Improved password validation - shows only one error at a time
+            password.addEventListener('input', function () {
+                // Reset validation state first
+                clearError(this);
+
+                // Check all conditions in sequence, stopping at the first failure
+                if (!this.value) {
+                    showError(this, 'Password is required');
+                }
+                else if (this.value[0] !== this.value[0].toUpperCase()) {
+                    showError(this, 'Password must start with a capital letter');
+                }
+                else if (!/[a-z]/.test(this.value)) {
+                    showError(this, 'Password must contain at least one lowercase letter');
+                }
+                else if (!/\d/.test(this.value)) {
+                    showError(this, 'Password must contain at least one number');
+                }
+                else if (!/[^a-zA-Z0-9]/.test(this.value)) {
+                    showError(this, 'Password must contain at least one special character');
+                }
+                else if (this.value.length < 8) {
+                    showError(this, 'Password must be at least 8 characters long');
+                }
+                else {
+                    // All validation passed, check confirm password match if it has a value
+                    if (confirmPassword.value) {
+                        validatePasswordMatch();
+                    }
+                }
+            });
+            // Live validation for confirm password
+            confirmPassword.addEventListener('input', validatePasswordMatch);
+
+            function validatePasswordMatch() {
+                if (confirmPassword.value && password.value !== confirmPassword.value) {
+                    showError(confirmPassword, 'Passwords do not match');
+                } else {
+                    clearError(confirmPassword);
+                }
             }
+
+            // Helper function to show error
+            function showError(element, message) {
+                element.classList.add('is-invalid');
+                element.classList.remove('is-valid');
+
+                // Find the feedback element
+                let feedback;
+                if (element === password) {
+                    // Special case for password which has the input group
+                    feedback = element.closest('.mb-3').querySelector('.invalid-feedback');
+                } else {
+                    feedback = element.nextElementSibling;
+                    if (!feedback || !feedback.classList.contains('invalid-feedback')) {
+                        feedback = element.closest('.mb-3').querySelector('.invalid-feedback');
+                    }
+                }
+
+                if (feedback) {
+                    feedback.textContent = message;
+                }
+            }
+
+            // Helper function to clear error
+            function clearError(element) {
+                if (element.value) {
+                    element.classList.add('is-valid');
+                }
+                element.classList.remove('is-invalid');
+            }
+
+            // Form submission handling - show only first error
+            form.addEventListener('submit', function (event) {
+                if (!form.checkValidity()) {
+                    event.preventDefault();
+                    event.stopPropagation();
+
+                    // Find the first invalid field and focus it
+                    const fields = [username, email, password, confirmPassword];
+                    let firstInvalidField = null;
+
+                    // Reset validation state
+                    fields.forEach(field => {
+                        field.classList.remove('is-invalid');
+                    });
+
+                    // Validate username field and show specific error messages
+                    if (!username.value) {
+                        firstInvalidField = username;
+                        showError(username, 'Username is required');
+                    } else if (!/[a-z]/.test(username.value)) {
+                        firstInvalidField = username;
+                        showError(username, 'Username must contain at least one lowercase letter');
+                    } 
+                    else if (!/\d/.test(username.value)) {
+                        firstInvalidField = username;
+                        showError(username, 'Username must contain at least one number');
+                    }  else if (username.value.length < 6 || username.value.length > 20) {
+                        firstInvalidField = username;
+                        showError(username, 'Username must be between 6-20 characters long');
+                    }
+                    // Validate email field until finding first error
+                    if (!email.value) {
+                        firstInvalidField = email;
+                        showError(email, 'Email is required');
+                    } else if (email.value && !(/^[^\s@]+@[^\s@]+\.[^\s@]+$/).test(email.value)) {
+                        firstInvalidField = email;
+                        showError(email, 'Please enter a valid email address');
+                    }
+
+                    // Validate password field until finding first error
+                    if (password.value && password.value[0] !== password.value[0].toUpperCase()) {
+                        firstInvalidField = password;
+                        showError(password, 'Password must start with a capital letter');
+                    }
+                    else if (password.value && !(/[a-z]/).test(password.value)) {
+                        firstInvalidField = password;
+                        showError(password, 'Password must contain at least one lowercase letter');
+                    }
+                    else if (password.value && !(/\d/).test(password.value)) {
+                        firstInvalidField = password;
+                        showError(password, 'Password must contain at least one number');
+                    }
+                    else if (password.value && !(/[^a-zA-Z0-9]/).test(password.value)) {
+                        firstInvalidField = password;
+                        showError(password, 'Password must contain at least one special character');
+                    }
+                    else if (password.value && password.value.length < 8) {
+                        firstInvalidField = password;
+                        showError(password, 'Password must be at least 8 characters long');
+                    } else if (!password.value) {
+                        firstInvalidField = password;
+                        showError(password, 'Password is required');
+                    } 
+
+                    // Validate confirm password field
+                    if (password.value !== confirmPassword.value) {
+                        firstInvalidField = confirmPassword;
+                        showError(confirmPassword, 'Passwords do not match');
+                    }
+
+                    // Focus the first invalid field
+                    if (firstInvalidField) {
+                        firstInvalidField.focus();
+                    }
+                } else {
+                    // If everything is valid, form will submit normally
+                    console.log('Form is valid, submitting...');
+                }
+            });
         });
     </script>
 </body>
+
 </html>

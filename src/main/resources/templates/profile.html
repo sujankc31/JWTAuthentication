@@ -1,46 +1,47 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org"
-      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.1/font/bootstrap-icons.min.css">
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.1/font/bootstrap-icons.min.css">
     <link th:href="@{/images/favicon.ico?v=1}" rel="shortcut icon" type="image/x-icon">
-   <style>
+    <style>
         :root {
-                /* Light theme */
-                --bg-color: #f0f2f5;
-                --text-color: #212529;
-                --card-bg: white;
-                --border-color: rgba(0,0,0,0.1);
-            }
+            /* Light theme */
+            --bg-color: #f0f2f5;
+            --text-color: #212529;
+            --card-bg: white;
+            --border-color: rgba(0, 0, 0, 0.1);
+        }
 
-            body.dark-mode {
-                /* Dark theme */
-                --bg-color: #1a1d21;
-                --text-color: #e9ecef;
-                --card-bg: #2d3238;
-                --border-color: rgba(255,255,255,0.1);
-            }
+        body.dark-mode {
+            /* Dark theme */
+            --bg-color: #1a1d21;
+            --text-color: #e9ecef;
+            --card-bg: #2d3238;
+            --border-color: rgba(255, 255, 255, 0.1);
+        }
 
-            body.dark-mode {
-                background-color: var(--bg-color);
-                color: var(--text-color);
-            }
+        body.dark-mode {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+        }
 
-            body.dark-mode .card,
-            body.dark-mode .stat-card,
-            body.dark-mode .topbar,
-            body.dark-mode .list-group-item {
-                background-color: var(--card-bg);
-                color: var(--text-color);
-            }
+        body.dark-mode .card,
+        body.dark-mode .stat-card,
+        body.dark-mode .topbar,
+        body.dark-mode .list-group-item {
+            background-color: var(--card-bg);
+            color: var(--text-color);
+        }
 
-            body.dark-mode .text-muted {
-                color: #9ca3af !important;
-            }
+        body.dark-mode .text-muted {
+            color: #9ca3af !important;
+        }
 
         :root {
             --primary-color: #4361ee;
@@ -62,7 +63,7 @@
             height: 100vh;
             position: fixed;
             transition: all 0.3s;
-            box-shadow: 0 0 20px rgba(0,0,0,0.1);
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
             z-index: 1000;
             width: 250px;
         }
@@ -74,7 +75,7 @@
         .sidebar-header {
             padding: 1.5rem;
             text-align: center;
-            border-bottom: 1px solid rgba(255,255,255,0.1);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
         }
 
         .sidebar .logo-expanded {
@@ -105,14 +106,15 @@
             padding: 0.75rem 1.5rem;
             display: flex;
             align-items: center;
-            color: rgba(255,255,255,0.8);
+            color: rgba(255, 255, 255, 0.8);
             text-decoration: none;
             transition: all 0.2s;
             border-left: 3px solid transparent;
         }
 
-        .sidebar-item:hover, .sidebar-item.active {
-            background-color: rgba(255,255,255,0.1);
+        .sidebar-item:hover,
+        .sidebar-item.active {
+            background-color: rgba(255, 255, 255, 0.1);
             color: white;
             border-left: 3px solid var(--accent-color);
         }
@@ -140,7 +142,7 @@
         .topbar {
             background-color: white;
             padding: 1rem;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -186,7 +188,7 @@
 
         .dropdown-menu {
             border-radius: 10px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
             border: none;
             padding: 0.5rem;
             min-width: 200px;
@@ -204,7 +206,7 @@
         .card {
             border: none;
             border-radius: 15px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
             transition: transform 0.3s, box-shadow 0.3s;
             overflow: hidden;
             margin-bottom: 1.5rem;
@@ -212,7 +214,7 @@
 
         .card:hover {
             transform: translateY(-5px);
-            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
         }
 
         .card-header {
@@ -282,7 +284,7 @@
             background-color: white;
             border-radius: 15px;
             padding: 1.5rem;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
             margin-bottom: 1.5rem;
         }
 
@@ -318,7 +320,7 @@
         .custom-toast {
             background: white;
             border-radius: 10px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
             border-left: 5px solid var(--primary-color);
             padding: 1rem;
             margin-bottom: 1rem;
@@ -330,6 +332,7 @@
                 transform: translateX(100%);
                 opacity: 0;
             }
+
             to {
                 transform: translateX(0);
                 opacity: 1;
@@ -355,7 +358,7 @@
             top: 3px;
             left: 3px;
             transition: transform 0.3s;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
         }
 
         .theme-switch.dark .theme-switch-toggle {
@@ -368,36 +371,36 @@
             .sidebar {
                 width: 70px;
             }
-            
+
             .sidebar .logo-expanded {
                 display: none;
             }
-            
+
             .sidebar .logo-collapsed {
                 display: block;
             }
-            
+
             .sidebar-item span {
                 display: none;
             }
-            
+
             .content-wrapper {
                 margin-left: 70px;
             }
-            
+
             .sidebar.expanded {
                 width: 250px;
                 z-index: 1050;
             }
-            
+
             .sidebar.expanded .logo-expanded {
                 display: block;
             }
-            
+
             .sidebar.expanded .logo-collapsed {
                 display: none;
             }
-            
+
             .sidebar.expanded .sidebar-item span {
                 display: inline;
             }
@@ -407,49 +410,51 @@
             .content-wrapper {
                 margin-left: 0;
             }
-            
+
             .sidebar {
                 transform: translateX(-100%);
                 width: 250px;
             }
-            
+
             .sidebar .logo-expanded {
                 display: block;
             }
-            
+
             .sidebar .logo-collapsed {
                 display: none;
             }
-            
+
             .sidebar-item span {
                 display: inline;
             }
-            
+
             .sidebar.mobile-visible {
                 transform: translateX(0);
             }
-            
+
             .mobile-overlay {
                 position: fixed;
                 top: 0;
                 left: 0;
                 right: 0;
                 bottom: 0;
-                background-color: rgba(0,0,0,0.5);
+                background-color: rgba(0, 0, 0, 0.5);
                 z-index: 999;
                 display: none;
             }
-            
+
             .mobile-overlay.visible {
                 display: block;
             }
         }
     </style>
 </head>
+
 <body>
     <!-- Toast Container -->
     <div class="toast-container">
-        <div id="successToast" class="custom-toast" role="alert" aria-live="assertive" aria-atomic="true" style="display: none;">
+        <div id="successToast" class="custom-toast" role="alert" aria-live="assertive" aria-atomic="true"
+            style="display: none;">
             <div class="d-flex">
                 <div class="me-3">
                     <i class="bi bi-check-circle-fill text-success fs-4"></i>
@@ -472,11 +477,11 @@
             <div class="logo-collapsed">D<span style="color: var(--accent-color)"></span></div>
         </div>
         <div class="sidebar-menu">
-            <a th:href="@{/dashboard}" class="sidebar-item active">
+            <a th:href="@{/dashboard}" class="sidebar-item ">
                 <i class="bi bi-grid-1x2-fill"></i>
                 <span>Dashboard</span>
             </a>
-            <a th:href="@{/profile}" class="sidebar-item">
+            <a th:href="@{/profile}" class="sidebar-item active">
                 <i class="bi bi-person-fill"></i>
                 <span>Profile</span>
             </a>
@@ -500,7 +505,8 @@
                 <i class="bi bi-gear-fill"></i>
                 <span>Settings</span>
             </a>
-            <a href="#" class="sidebar-item text-danger" onclick="document.getElementById('logoutForm').submit(); return false;">
+            <a href="#" class="sidebar-item text-danger"
+                onclick="document.getElementById('logoutForm').submit(); return false;">
                 <i class="bi bi-box-arrow-right"></i>
                 <span>Logout</span>
             </a>
@@ -515,12 +521,12 @@
             <button class="toggle-sidebar" id="toggleSidebar">
                 <i class="bi bi-list"></i>
             </button>
-            
+
             <div class="d-flex align-items-center">
                 <div class="theme-switch me-3" id="themeSwitch">
                     <div class="theme-switch-toggle"></div>
                 </div>
-                
+
                 <div class="dropdown user-dropdown">
                     <div class="user-menu" data-bs-toggle="dropdown">
                         <div class="user-avatar" th:text="${username?.substring(0,1)}">J</div>
@@ -531,12 +537,16 @@
                         <i class="bi bi-chevron-down ms-2"></i>
                     </div>
                     <ul class="dropdown-menu dropdown-menu-end">
-                        <li><a class="dropdown-item" th:href="@{/profile}"><i class="bi bi-person me-2"></i> My Profile</a></li>
+                        <li><a class="dropdown-item" th:href="@{/profile}"><i class="bi bi-person me-2"></i> My
+                                Profile</a></li>
                         <li><a class="dropdown-item" href="#"><i class="bi bi-gear me-2"></i> Settings</a></li>
                         <li><a class="dropdown-item" href="#"><i class="bi bi-bell me-2"></i> Notifications</a></li>
-                        <li><hr class="dropdown-divider"></li>
                         <li>
-                            <a class="dropdown-item text-danger" href="#" onclick="document.getElementById('logoutForm').submit(); return false;">
+                            <hr class="dropdown-divider">
+                        </li>
+                        <li>
+                            <a class="dropdown-item text-danger" href="#"
+                                onclick="document.getElementById('logoutForm').submit(); return false;">
                                 <i class="bi bi-box-arrow-right me-2"></i> Logout
                             </a>
                         </li>
@@ -547,7 +557,7 @@
 
         <!-- Main Content Area -->
         <div class="container-fluid p-4">
-            <div class="row mb-4">
+            <!-- <div class="row mb-4">
                 <div class="col-md-3">
                     <div class="stat-card d-flex align-items-center">
                         <div class="stat-icon bg-primary-subtle text-primary me-3">
@@ -592,19 +602,23 @@
                         </div>
                     </div>
                 </div>
-            </div>
+            </div> -->
 
             <!-- User Profile -->
-            <div class="card">
+            <div class="card" id="user-profile-card">
                 <div class="profile-header">
                     <div class="profile-avatar" th:text="${username?.substring(0,1)}">J</div>
                     <div class="profile-actions">
-                        <button class="btn btn-light rounded-pill shadow-sm">
+                        <button class="btn btn-light rounded-pill shadow-sm" onclick="showEditUserCard()">
                             <i class="bi bi-pencil-fill"></i> Edit Profile
                         </button>
+
+                        <script>
+
+                        </script>
                     </div>
                 </div>
-                <div class="card-body profile-info">
+                <div class="card-body profile-info ">
                     <h3 class="mb-1" th:text="${username}">John Doe</h3>
                     <p class="text-muted mb-4">Senior Software Engineer</p>
 
@@ -616,39 +630,41 @@
                                     <span class="badge-role" th:text="${roles}">Administrator</span>
                                 </div>
                             </div>
-                            
+
                             <div class="info-section">
                                 <div class="info-label">Email Address</div>
-                                <div class="info-value"><span  th:text="${user.email}"></span></div>
+                                <div class="info-value"><span th:text="${user.email}"></span></div>
                             </div>
-                            
+
                             <div class="info-section">
                                 <div class="info-label">Phone Number</div>
                                 <div class="info-value">+1 (555) 123-4567</div>
                             </div>
                         </div>
-                        
+
                         <div class="col-md-6">
                             <div class="info-section">
                                 <div class="info-label">Location</div>
                                 <div class="info-value">San Francisco, CA</div>
                             </div>
-                            
+
                             <div class="info-section">
                                 <div class="info-label">Department</div>
                                 <div class="info-value">Engineering</div>
                             </div>
-                            
+
                             <div class="info-section">
                                 <div class="info-label">Account Created at</div>
-                                <div class="info-value"><span th:text="${#temporals.format(user.createdAt, 'yyyy-MM-dd HH:mm:ss')}"></span></div>
+                                <div class="info-value"><span
+                                        th:text="${#temporals.format(user.createdAt, 'yyyy-MM-dd HH:mm:ss')}"></span>
+                                </div>
                             </div>
                         </div>
                     </div>
-                    
+
                     <hr>
-                    
-                    <h5 class="mb-3">Recent Activity</h5>
+
+                    <!-- <h5 class="mb-3">Recent Activity</h5>
                     <div class="list-group">
                         <div class="list-group-item border-0 mb-2 bg-light rounded p-3">
                             <div class="d-flex align-items-center">
@@ -680,32 +696,114 @@
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    </div> -->
                 </div>
+            </div>
+            <!--Edit User Card  -->
+            <div class="card d-none" id="edit-user-card">
+                <form th:action="@{/edit-profile}" method="post">
+                    <div class="card-header">
+                        <h5 class="mb-0">Edit Profile</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="form-label">Username</label>
+                                    <input type="text" class="form-control" th:value="${user.username}" name="username">
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="form-label">Email</label>
+                                    <input type="email" class="form-control" th:value="${user.email}" name="email">
+                                </div>
+                            </div>
+
+                            <!-- <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">Email</label>
+                                <input type="email" class="form-control" th:value="${user.email}" name="email">
+                            </div>
+                        </div> -->
+                            <div class="col-md-4">
+                                <!-- <span class="form-control-plaintext" th:text="${user.isActive ? 'Active' : 'Inactive'}"></span> -->
+                                <div class="mb-3">
+                                    <label class="form-label">Account Status</label>
+                                    <span class="form-control badge-role rounded-pill text-center"
+                                        th:text="${user.isActive ? 'Active' : 'Inactive'}"></span>
+                                    <!-- <select class="form-select" name="active">
+                                        <option value="true">Active</option>
+                                        <option value="false">Inactive</option>
+                                    </select>  -->
+                                </div>
+                            </div>
+
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="form-label">Phone Number</label>
+                                    <input type="tel" class="form-control" name="phone" placeholder="+1 (555) 123-4567">
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="form-label">Location</label>
+                                    <input type="text" class="form-control" name="location" placeholder="City, Country">
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="form-label">Department</label>
+                                    <select class="form-select" name="department">
+                                        <option value="Engineering">Engineering</option>
+                                        <option value="Marketing">Marketing</option>
+                                        <option value="Sales">Sales</option>
+                                        <option value="HR">Human Resources</option>
+                                    </select>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="mb-3">
+                                    <label class="form-label">Role</label>
+                                    <span class="form-control badge-role rounded-pill text-center" th:text="${roles}" readonly></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="d-flex justify-content-end">
+                            <button type="submit" class="btn btn-primary">Save Changes</button>
+                        </div>
+                    </div>
+                </form>
+
             </div>
         </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', function () {
             // Show success toast on page load if message exists
             var successMessage = /*[[${successMessage}]]*/ null;
-            
+
             if (successMessage) {
                 document.getElementById('successToast').style.display = 'block';
-                setTimeout(function() {
+                setTimeout(function () {
                     closeToast();
                 }, 3000);
             }
-            
+
             // Toggle sidebar
             const toggleSidebar = document.getElementById('toggleSidebar');
             const sidebar = document.getElementById('sidebar');
             const content = document.getElementById('content');
             const mobileOverlay = document.getElementById('mobileOverlay');
-            
-            toggleSidebar.addEventListener('click', function() {
+
+            toggleSidebar.addEventListener('click', function () {
                 if (window.innerWidth <= 576) {
                     sidebar.classList.toggle('mobile-visible');
                     mobileOverlay.classList.toggle('visible');
@@ -716,47 +814,56 @@
                     content.classList.toggle('expanded');
                 }
             });
-            
-            mobileOverlay.addEventListener('click', function() {
+
+            mobileOverlay.addEventListener('click', function () {
                 sidebar.classList.remove('mobile-visible');
                 mobileOverlay.classList.remove('visible');
             });
-            
+
             // Theme toggle
             const themeSwitch = document.getElementById('themeSwitch');
-            
-            themeSwitch.addEventListener('click', function() {
+
+            themeSwitch.addEventListener('click', function () {
                 themeSwitch.classList.toggle('dark');
                 document.body.classList.toggle('dark-mode');
-                
+
                 // Here you could implement actual dark mode switching
                 // For example, by adding a 'dark-mode' class to the body
                 // and adding appropriate CSS styles
             });
-            
+
             // Dropdown for user menu
             const dropdownItems = document.querySelectorAll('.dropdown-item');
             dropdownItems.forEach(item => {
-                item.addEventListener('click', function(e) {
+                item.addEventListener('click', function (e) {
                     if (this.getAttribute('href') === '#') {
                         e.preventDefault();
                     }
                 });
             });
-            
+
             // Handle window resize
-            window.addEventListener('resize', function() {
+            window.addEventListener('resize', function () {
                 if (window.innerWidth > 576) {
                     mobileOverlay.classList.remove('visible');
                 }
             });
         });
-        
+
         // Close toast function
         function closeToast() {
             const toast = document.getElementById('successToast');
             toast.style.display = 'none';
         }
+
+        // Show edit user card and hide user profile card
+        function showEditUserCard() {
+            const userProfileCard = document.querySelector('#user-profile-card');
+            const editUserCard = document.querySelector('#edit-user-card');
+            userProfileCard.classList.toggle('d-none');
+            editUserCard.classList.toggle('d-none');
+        }
     </script>
 </body>
+
 </html>

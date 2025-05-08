@@ -32,7 +32,7 @@ public class User {
     @Size(max = 20)
     private String username;
 
-    @NotBlank
+    @NotBlank(message = "Email is required")
     @Size(max = 50)
     @Email
     private String email;

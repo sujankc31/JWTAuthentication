@@ -15,7 +15,8 @@ import org.springframework.security.web.SecurityFilterChain;
 import com.example.rolebasedauth.Service.UserDetailsServiceImpl;
 
 @Configuration
-@EnableWebSecurity(debug = true) // Enable debug to see which configuration is being applied
+@EnableWebSecurity() // Enable debug to see which configuration is being appliedgit ls-remote --tags origin
+
 public class SecurityConfig {
 
     @Autowired
@@ -47,15 +48,15 @@ public class SecurityConfig {
                 session.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED))
             .authenticationProvider(authenticationProvider())
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/", "/login","/login1","/dashboard", "/register", "/contact", "/about","/api/auth/**", 
-                               "/homepage", "/custom-login", "/css/**", 
-                               "/js/**", "/images/**", "/error", "/?continue").permitAll()
+                .requestMatchers("/","change-user-status/**","/total-active-users","/active-user-test","/login","/login1","/dashboard", "/register", "/contact", "/about","/api/auth/**", 
+                               "/homepage", "/custom-login", "/css/**","/user-status/**","/user/**","/admin/**","/actuator/**",
+                               "/js/**", "/images/**", "/error","/page-not-found", "/?continue").permitAll()
                 .requestMatchers("/dashboard").authenticated()
                 .anyRequest().authenticated()
             )
             .formLogin(form -> form
                 .loginPage("/custom-login")
-                .loginProcessingUrl("/api/auth/login")
+                .loginProcessingUrl("/api/auth/login1")
                 .defaultSuccessUrl("/dashboard", true)
                 .failureUrl("/custom-login?error=true")
                 .permitAll()

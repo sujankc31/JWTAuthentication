@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 @Service
@@ -110,6 +111,7 @@ public class UserServiceImpl implements UserService {
         return convertToUserDto(user);
     }
 
+
     @Override
     public List<UserDto> getAllUsers() {
         return userRepository.findAll().stream()
@@ -117,14 +119,50 @@ public class UserServiceImpl implements UserService {
                 .collect(Collectors.toList());
     }
 
+
+    /**
+     * Update the active status of a user identified by {@code id}.
+     * 
+     * @param id the ID of the user whose active status is to be updated
+     * @return a UserDto containing the updated active status of the user, or
+     *         404 if the user is not found
+     */
     @Override
     @Transactional
-    public UserDto updateUser(Long id, UserDto userDto) {
+    public UserDto updateUserStatus(Long id) {
+        User user = userRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+        
+        boolean newStatus = !user.getIsActive();
+        user.setIsActive(newStatus);
+        User updatedUser = userRepository.save(user);
+        return convertToUserDto(updatedUser);
+    }
+    @Override
+    @Transactional
+    public UserDto updateUser(Long id, UserDto userDto) {  
         User existingUser = userRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
         existingUser.setUsername(userDto.getUsername());
         existingUser.setEmail(userDto.getEmail());
+
+        if (userDto.getNewPassword() != null && !userDto.getNewPassword().isEmpty()) {
+            existingUser.setPassword(passwordEncoder.encode(userDto.getNewPassword()));
+        }   
+        if (userDto.getIsActive() != null) {
+        boolean newStatus = !existingUser.getIsActive();
+        existingUser.setIsActive(newStatus);
+        }
+        if (userDto.getRoles() != null && !userDto.getRoles().isEmpty()) {
+            Set<Role> roles = new HashSet<>();
+            for (String roleName : userDto.getRoles()) {
+                Role role = roleRepository.findByName(Role.ERole.valueOf(roleName))
+                        .orElseThrow(() -> new RuntimeException("Role not found: " + roleName));
+                roles.add(role);
+            }
+            existingUser.setRoles(roles);
+        }
 
         User updatedUser = userRepository.save(existingUser);
         return convertToUserDto(updatedUser);
@@ -192,6 +230,142 @@ public class UserServiceImpl implements UserService {
                 .map(this::convertToUserDto)
                 .collect(Collectors.toList());
     }
+   
+    @Override
+    public Integer getTotalActiveUsers() {
+        Integer activeUserCount = userRepository.countActiveUsers(); // Replace with your logic to count active users
+        return (activeUserCount != null) ? activeUserCount : 0;
+    }
+    @Override
+    public Integer getTotalInactiveUsers() {
+        Integer inactiveUserCount = userRepository.countInactiveUsers(); // Replace with your logic to count active users
+        return (inactiveUserCount != null) ? inactiveUserCount : 0;
+    }
+
+    @Override
+    public Integer getTotalUsers() {
+        Integer totalUserCount = userRepository.countTotalUsers(); // Replace with your logic to count total users
+        return (totalUserCount != null) ? totalUserCount : 0;
+    }
+
+    @Override
+    @Transactional
+    public UserDto editProfile(User user, String email) {
+        user.setEmail(email);
+       
+        User updatedUser = userRepository.save(user);
+        return convertToUserDto(updatedUser);
+    }
+    @Override
+    @Transactional
+    public UserDto addUser(UserCreateDto userCreateDto) {
+        String username = userCreateDto.getUsername();
+
+        if (username == null || username.isBlank()) {
+            throw new RuntimeException("Username cannot be empty!");
+        }
+        
+        // Check if username has any uppercase letters
+        if (!username.equals(username.toLowerCase())) {
+            throw new RuntimeException("Username must not contain any uppercase letters!");
+        }
+        
+        // Check for invalid characters
+        if (!username.matches("^[a-z0-9_]*$")) {
+            throw new RuntimeException("Username must only contain lowercase letters, numbers, and underscores!");
+        }
+        
+        // Check for minimum length
+        if (username.length() < 6) {
+            throw new RuntimeException("Username must be at least 6 characters long!");
+        }
+        
+
+        // Email validation pattern
+        String emailRegex = "^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$";
+        Pattern emailPattern = Pattern.compile(emailRegex);
+
+        // Check if email is valid
+        if (userCreateDto.getEmail() == null || !emailPattern.matcher(userCreateDto.getEmail()).matches()) {
+            throw new RuntimeException("Invalid email format! Example: example@domain.com");
+        }
+        // Check if username or email already exists
+        if (userRepository.existsByUsername(userCreateDto.getUsername())) {
+            throw new RuntimeException("Username is already taken!");
+        }
+        if (userRepository.existsByEmail(userCreateDto.getEmail())) {
+            throw new RuntimeException("Email is already in use!");
+        }
+
+        // Create user Entity
+        User user = User.builder()
+                .username(userCreateDto.getUsername())
+                .email(userCreateDto.getEmail())
+                .password(passwordEncoder.encode(userCreateDto.getPassword()))
+                .createdAt(LocalDateTime.now())
+                .isActive(true)
+                .build();
+
+        // Assign default USER role
+        // Role userRole = roleRepository.findByName(Role.ERole.ROLE_USER)
+        // .orElseThrow(() -> new RuntimeException("Default role not found"));
+
+        // user.setRoles(Set.of(userRole)); // Assign default role
+
+        // Handle roles from form
+        Set<String> strRoles = userCreateDto.getRoles();
+        Set<Role> roles = new HashSet<>();
+
+        if (strRoles == null || strRoles.isEmpty()) {
+            // Optional fallback to default role
+            Role defaultRole = roleRepository.findByName(Role.ERole.ROLE_USER)
+                    .orElseThrow(() -> new RuntimeException("Default role not found"));
+            roles.add(defaultRole);
+        } else {
+            for (String roleName : strRoles) {
+                Role.ERole roleEnum = Role.ERole.valueOf(roleName);
+                Role role = roleRepository.findByName(roleEnum)
+                        .orElseThrow(() -> new RuntimeException("Role not found: " + roleName));
+                roles.add(role);
+            }
+        }
+
+        user.setRoles(roles);
+        System.out.println("Saving user...");
+        User savedUser = userRepository.save(user);
+
+        // Convert and return UserDto
+        return convertToUserDto(savedUser);
+    }
+    
+
+@Override
+@Transactional
+public UserDto editUser(UserDto userDto) {
+    User existingUser = userRepository.findById(userDto.getId())
+            .orElseThrow(() -> new RuntimeException("User not found"));
+
+    existingUser.setUsername(userDto.getUsername());
+    existingUser.setEmail(userDto.getEmail());
+    
+    if (userDto.getNewPassword() != null && !userDto.getNewPassword().isEmpty()) {
+        existingUser.setPassword(passwordEncoder.encode(userDto.getNewPassword()));
+    }
+    
+    if (userDto.getRoles() != null && !userDto.getRoles().isEmpty()) {
+        Set<Role> roles = new HashSet<>();
+        for (String roleName : userDto.getRoles()) {
+            Role role = roleRepository.findByName(Role.ERole.valueOf(roleName))
+                    .orElseThrow(() -> new RuntimeException("Role not found: " + roleName));
+            roles.add(role);
+        }
+        existingUser.setRoles(roles);
+    }
+
+    User updatedUser = userRepository.save(existingUser);
+    return convertToUserDto(updatedUser);
+}
+
 
     // Helper method to convert User entity to UserDto
     private UserDto convertToUserDto(User user) {
