@@ -1,7 +1,11 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description"
+        content="Personal portfolio of Sujan K.C., a fullstack developer specializing in responsive web design, Java Spring-boot, and Vanilla JS.">
     <title>Login</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
@@ -9,27 +13,32 @@
     <link th:href="@{/images/favicon.ico?v=1}" rel="shortcut icon" type="image/x-icon">
 
 </head>
+
 <body>
- <!-- Regsitration Success Toast -->
- <div class="position-fixed top-0 start-50 translate-middle-x p-3" style="z-index: 11">
-    <div id="successToast" class="toast align-items-center text-white bg-success border-0" role="alert" aria-live="assertive" aria-atomic="true">
-        <div class="d-flex">
-            <div class="toast-body" th:text="${successMessage1}">
-                Registration successfull. Please login to your account.
+    <!-- Regsitration Success Toast -->
+    <div class="position-fixed top-0 start-50 translate-middle-x p-3" style="z-index: 11">
+        <div id="successToast" class="toast align-items-center text-white bg-success border-0" role="alert"
+            aria-live="assertive" aria-atomic="true">
+            <div class="d-flex">
+                <div class="toast-body" th:text="${successMessage1}">
+                    Registration successfull. Please login to your account.
+                </div>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"
+                    aria-label="Close"></button>
             </div>
-            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
         </div>
     </div>
-</div>
 
-      <!-- Error Toast -->
-      <div class="position-fixed top-0 start-50 translate-middle-x p-3" style="z-index: 11">
-        <div id="errorToast" class="toast align-items-center text-white bg-danger border-0" role="alert" aria-live="assertive" aria-atomic="true">
+    <!-- Error Toast -->
+    <div class="position-fixed top-0 start-50 translate-middle-x p-3" style="z-index: 11">
+        <div id="errorToast" class="toast align-items-center text-white bg-danger border-0" role="alert"
+            aria-live="assertive" aria-atomic="true">
             <div class="d-flex">
                 <div class="toast-body" th:text="${errorMessage}">
                     Login Failed
                 </div>
-                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast"
+                    aria-label="Close"></button>
             </div>
         </div>
     </div>
@@ -43,23 +52,43 @@
                         </h3>
                     </div>
                     <div class="card-body">
-                        <div th:if="${errorMessage}" class="alert alert-danger text-small" th:text="${errorMessage}">
-                        </div>
                         <form th:action="@{/login1}" method="post">
                             <div class="mb-3">
+                                <i class="fas fa-user me-2"></i>
                                 <label for="username" class="form-label">Username</label>
                                 <input type="text" class="form-control" id="username" name="username" required>
                             </div>
-                            <!-- <div th:if="${errorMessage}" class="alert alert-danger" th:text="${errorMessage}">
-                            </div> -->
                             <div class="mb-3">
-                                <label for="password" class="form-label">Password</label>
+                                <label for="password" class="form-label"><i class="fas fa-lock me-2"></i>Password</label>
                                 <input type="password" class="form-control" id="password" name="password" required>
                             </div>
-                            <!-- <div th:if="${errorMessage}" class="alert alert-danger" th:text="${errorMessage}">
-                            </div> -->
-                            <div class="d-grid">
-                                <button type="submit" class="btn btn-primary">Login</button>
+                            <div class="mb-3">
+                                <i class="fas fa-shield-alt me-2"></i>
+                                <label for="captcha" class="form-label"> Captcha</label>
+                                <div class="input-group gap-2">
+                                    <img th:src="@{/captcha}" alt="CAPTCHA" id="captchaImage"
+                                        style="height: 50px; cursor: pointer;"
+                                        onclick="this.src='/captcha?' + Math.random()" class="input-group-text" />
+                                    <input type="text" name="captcha" class="form-control" placeholder="Enter CAPTCHA"
+                                        required />
+                                </div>
+                                <div class="d-flex justify-content-center">
+                                <div th:if="${captchaErrorMessage}" class="alert alert-danger mt-1" style="width: fit-content;"
+                                    th:text="${captchaErrorMessage}">
+                                </div>
+                                </div>
+                            </div>
+                            <div class="d-flex justify-content-center">
+                                <button type="submit" class="btn btn-primary btn-lg" id="loginButton" disabled>
+                                    <span id="spinner" class="spinner-border spinner-border-sm me-2" role="status"
+                                        aria-hidden="true" style="display: none;"></span>
+                                    Login
+                                </button>
+                            </div>
+                            <div id="loginError" class="alert alert-danger d-none align-items-center mt-3"
+                                style="display: none;" role="alert">
+                                <i class="fas fa-times-circle me-2"></i>
+                                Login Failed
                             </div>
                             <div class="text-center mt-3">
                                 <a th:href="@{/register}">Don't have an account? Register here</a>
@@ -70,12 +99,37 @@
             </div>
         </div>
     </div>
+    </div>
+    <script>
+        function validateInputs() {
+            const username = document.getElementById('username').value.trim();
+            const password = document.getElementById('password').value.trim();
+            const captcha = document.querySelector('input[name="captcha"]').value.trim();
+            const loginButton = document.getElementById('loginButton');
+
+            loginButton.disabled = !(username && password && captcha);
+        }
+
+        function showSpinner() {
+            document.getElementById('spinner').style.display = 'inline-block';
+            // Simulate login failure for demonstration purposes
+            setTimeout(() => {
+                document.getElementById('spinner').style.display = 'none';
+                document.getElementById('loginError').style.display = 'flex';
+            }, 2000);
+        }
+
+        document.getElementById('username').addEventListener('input', validateInputs);
+        document.getElementById('password').addEventListener('input', validateInputs);
+        document.querySelector('input[name="captcha"]').addEventListener('input', validateInputs);
+    </script>
+    
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
-      <!-- Script to show toast notification -->
-      <script th:inline="javascript">
-        document.addEventListener('DOMContentLoaded', function() {
+    <!-- Script to show toast notification -->
+    <script th:inline="javascript">
+        document.addEventListener('DOMContentLoaded', function () {
             var errorMessage = /*[[${errorMessage}]]*/ null;
-            
+
             if (errorMessage) {
                 var errorToast = new bootstrap.Toast(document.getElementById('errorToast'), {
                     delay: 1000 // Auto-hide after 1 second
@@ -84,7 +138,7 @@
             }
 
             var successMessage = /*[[${successMessage1}]]*/ null;
-            
+
             if (successMessage) {
                 var successToast = new bootstrap.Toast(document.getElementById('successToast'), {
                     delay: 2000 // Auto-hide after 1 second
@@ -94,4 +148,5 @@
         });
     </script>
 </body>
+
 </html>
