@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security" lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Personal portfolio of Sujan K.C., a fullstack developer specializing in responsive web design, Java Spring-boot, and Vanilla JS.">
+    <title>About Us</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-icons/1.11.1/font/bootstrap-icons.min.css">
+    <link th:href="@{/images/favicon.ico?v=1}" rel="shortcut icon" type="image/x-icon">
+    <style>
+        :root {
+            --primary-color: #3498db;
+            --secondary-color: #2980b9;
+            --accent-color: #f1c40f;
+            --background-color: #ecf0f1;
+            --text-color: #23272e;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            margin: 0;
+            padding: 0;
+        }
+
+        .hero-section {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 60px 0;
+            text-align: center;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .hero-section h1 {
+            font-size: 3rem;
+            font-weight: 700;
+        }
+
+        .hero-section p {
+            font-size: 1.25rem;
+        }
+        
+        .navbar {
+            background-color: var(--primary-color);
+            padding: 10px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .navbar-brand {
+            font-size: 1.5rem;
+            font-weight: 700;
+        }
+
+        .navbar-nav .nav-link {
+            color: white;
+            text-decoration: none;
+        }
+
+        .navbar-nav .nav-link:hover {
+            color: #f1c40f;
+        }
+        .content-section {
+            padding: 40px 20px;
+            background-color: white;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .content-section h2 {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+        }
+
+        .content-section p {
+            font-size: 1.125rem;
+            line-height: 1.6;
+        }
+
+        .team-section {
+            background-color: #ffffff;
+            padding: 40px 20px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .team-member {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .team-member img {
+            border-radius: 50%;
+            width: 120px;
+            height: 120px;
+            margin-bottom: 15px;
+        }
+
+        .team-member h3 {
+            font-size: 1.25rem;
+            margin-bottom: 5px;
+        }
+
+        .team-member p {
+            font-size: 1rem;
+            color: #6c757d;
+        }
+
+        .contact-section {
+            background: var(--secondary-color);
+            color: white;
+            padding: 40px 20px;
+            text-align: center;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .contact-section h2 {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+        }
+
+        .contact-section p {
+            font-size: 1.125rem;
+        }
+
+        .contact-section a {
+            color: var(--accent-color);
+            text-decoration: none;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">Portfolio App</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item me-2">
+                        <a class="nav-link btn btn-success text-white me-2" th:href="@{/homepage}">Home</a>
+                    </li>
+                    <li class="nav-item me-2">
+                        <a class="nav-link active btn btn-success text-white me-2" th:href="@{/about}">About</a>
+                    </li>
+                    <li class="nav-item me-2">
+                        <a class="nav-link btn btn-success text-white me-2" th:href="@{/contact}">Contact</a>
+                    </li>
+                    <li class="nav-item me-2">
+                        <a class="nav-link btn btn-primary text-white" th:href="@{/custom-login}">Login</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <section class="hero-section">
+        <h1>Welcome to Our Company</h1>
+        <p>Innovating the future, one step at a time.</p>
+    </section>
+
+    <section class="content-section">
+        <div class="container">
+            <h2>About Us</h2>
+            <p>Our company has been at the forefront of innovation, consistently delivering top-notch solutions to
+                our clients. We pride ourselves on our commitment to quality and excellence, ensuring that our products
+                and services exceed expectations. With a team of dedicated professionals, we are driven by
+                passion and a relentless pursuit of excellence. Join us as we continue to make strides in the industry
+                and set new standards for success.</p>
+        </div>
+    </section>
+
+    <section class="team-section">
+        <div class="container">
+            <h2>Meet Our Team</h2>
+            <div class="row">
+                <div class="col-md-4 team-member">
+                    <img src="https://images.pexels.com/photos/2379004/pexels-photo-2379004.jpeg?auto=compress&cs=tinysrgb&h=750&w=1260" alt="Rabin Kc, CTO" class="img-fluid rounded-circle">
+
+                    <h3>Suzan Kc</h3>
+                    <p>CEO</p>
+                </div>
+                <div class="col-md-4 team-member">
+                    <img src="https://images.pexels.com/photos/415829/pexels-photo-415829.jpeg?auto=compress&cs=tinysrgb&h=750&w=1260" alt="Suzan Kc, CEO" class="img-fluid rounded-circle">
+                    <h3>Rabin Kc</h3>
+                    <p>CTO</p>
+                </div>
+                <div class="col-md-4 team-member">
+                    <img src="https://images.pexels.com/photos/774909/pexels-photo-774909.jpeg?auto=compress&cs=tinysrgb&h=750&w=1260" alt="Emily Johnson, COO" class="img-fluid rounded-circle">
+                    <h3>Emily Johnson</h3>
+                    <p>COO</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="contact-section">
+        <h2>Contact Us</h2>
+        <p>Have any questions? We'd love to hear from you. <br> Email us at <a href="mailto:contact@company.com">contact@company.com</a></p>
+    </section>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>
+
+

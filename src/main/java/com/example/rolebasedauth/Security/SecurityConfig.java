@@ -48,8 +48,8 @@ public class SecurityConfig {
                 session.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED))
             .authenticationProvider(authenticationProvider())
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/","change-user-status/**","/total-active-users","/active-user-test","/login","/login1","/dashboard", "/register", "/contact", "/about","/api/auth/**", 
-                               "/homepage", "/custom-login", "/css/**","/user-status/**","/user/**","/admin/**","/actuator/**",
+                .requestMatchers("/","/change-user-status/**","/total-active-users","/active-user-test","/login","/login1","/dashboard", "/register", "/contact", "/about","/api/auth/**", 
+                               "/homepage", "/custom-login", "/css/**","/user-status/**","/user/**","/admin/**","/actuator/**","/robots.txt", "/sitemap.xml","/captcha","/verify-captcha","/webfonts/**",
                                "/js/**", "/images/**", "/error","/page-not-found", "/?continue").permitAll()
                 .requestMatchers("/dashboard").authenticated()
                 .anyRequest().authenticated()
