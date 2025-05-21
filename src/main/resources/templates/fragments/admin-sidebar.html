@@ -1,12 +1,12 @@
 <!-- src/main/resources/templates/fragments/admin-sidebar.html -->
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" >
 <body>
     <!-- Define the sidebar fragment with a parameter for active menu item -->
     <div th:fragment="adminSidebar(activeItem)" class="bg-light border-right col-sm-8" id="sidebar-wrapper">
         <div class="sidebar-heading d-flex justify-content-between align-items-center">
             <span id="admin">Admin Panel</span>
-            <button class="btn btn-link" id="menu-toggle"><i class="bi bi-list"></i></button>
+            <button class="btn btn-link" id="menu-toggle" aria-label="Toggle menu"><i class="bi bi-list"></i></button>
         </div>
         <div class="list-group list-group-flush">
             <a th:href="@{/admin/dashboard}" 
@@ -27,6 +27,13 @@
                th:classappend="${activeItem == 'rolemanagement'} ? 'active' : ''"
                data-tooltip="Role Management">
                 <i class="bi bi-shield-lock me-2"></i><span>Role Management</span>
+            </a>
+
+            <a th:href="@{/admin/emails}" 
+               class="list-group-item list-group-item-action bg-light"
+               th:classappend="${activeItem == 'emails'} ? 'active' : ''"
+               data-tooltip="Email Management">
+                <i class="bi bi-envelope me-2"></i><span>Emails</span>
             </a>
 
             <a th:href="@{/logout}" class="list-group-item list-group-item-action bg-light"

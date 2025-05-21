@@ -1,0 +1,36 @@
+# robots.txt for JWTAuthentication application
+# Updated 2025 Standard Configuration
+
+# Default rule for all robots
+User-agent: *
+# Allow all robots to access the site
+Allow: /
+
+# Protect sensitive paths
+Disallow: /api/
+Disallow: /admin/
+Disallow: /private/
+Disallow: /auth/
+Disallow: /*.json$
+Disallow: /*.xml$
+
+# Crawl-delay recommendation (in seconds)
+Crawl-delay: 5
+
+# Sitemap location
+Sitemap: http://localhost:8080/sitemap.xml
+
+# Modern additions
+# Block AI training crawlers
+User-agent: GPTBot
+Disallow: /
+
+User-agent: ChatGPT-User
+Disallow: /
+
+User-agent: GoogleBot-Extended
+Allow: /public/
+Allow: /assets/
+
+# Rate limiting hint
+Request-rate: 1/10
