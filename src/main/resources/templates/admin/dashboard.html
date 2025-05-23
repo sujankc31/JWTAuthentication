@@ -112,74 +112,124 @@
             </div>
             <!-- Main content -->
             <div class="col-sm-9 mt-2">
-                <div class="row">
-                    <div class="col-md-4 mt-2">
-                        <div class="card">
-                            <div class="card-header bg-warning">
-                                <h4>Total Users</h4>
-                            </div>
-                            <div class="card-body text-center">
-                                <span th:if="${totalUserCount != null}">
-                                    <h4> <span th:text="${totalUserCount}"></span></h4>
-                                </span>
-                                <span th:if="${totalUserCount == null}">
-                                    <h4>NULL</h4>
-                                </span>
+                <div class="row g-3">
+                    <!-- Total Users Card -->
+                    <div class="col-md-4">
+                        <div class="card border-0 shadow-sm h-100">
+                            <div class="card-body p-4">
+                                <div class="d-flex align-items-center mb-3">
+                                    <div class="rounded-circle bg-warning bg-opacity-10 p-3 me-3">
+                                        <i class="fas fa-users fa-lg text-warning"></i>
+                                    </div>
+                                    <h5 class="card-title mb-0">Total Users</h5>
+                                </div>
+                                <div class="d-flex align-items-center">
+                                    <h2 class="mb-0 fw-bold" th:text="${totalUserCount ?: '0'}">0</h2>
+                                    <span class="badge bg-warning bg-opacity-10 text-warning ms-2 px-3 py-2">
+                                        <i class="fas fa-chart-line me-1"></i>Total
+                                    </span>
+                                </div>
                             </div>
                         </div>
                     </div>
-                    <div class="col-md-4 mt-2">
-                        <div class="card">
-                            <div class="card-header bg-success">
-                                <h4>Active Users</h4>
-                            </div>
-                            <div class="card-body text-center">
-                                <span th:if="${activeUserCount != null}">
-                                    <h4> <span th:text="${activeUserCount}"></span></h4>
-                                </span>
-                                <span th:if="${activeUserCount == null}">
-                                    <h4>NULL</h4>
-                                </span>
-                            </div>
 
+                    <!-- Active Users Card -->
+                    <div class="col-md-4">
+                        <div class="card border-0 shadow-sm h-100">
+                            <div class="card-body p-4">
+                                <div class="d-flex align-items-center mb-3">
+                                    <div class="rounded-circle bg-success bg-opacity-10 p-3 me-3">
+                                        <i class="fas fa-user-check fa-lg text-success"></i>
+                                    </div>
+                                    <h5 class="card-title mb-0">Active Users</h5>
+                                </div>
+                                <div class="d-flex align-items-center">
+                                    <h2 class="mb-0 fw-bold" th:text="${activeUserCount ?: '0'}">0</h2>
+                                    <span class="badge bg-success bg-opacity-10 text-success ms-2 px-3 py-2">
+                                        <i class="fas fa-arrow-up me-1"></i>Active
+                                    </span>
+                                </div>
+                            </div>
                         </div>
                     </div>
-                    <div class="col-md-4 mt-2">
-                        <div class="card">
-                            <div class="card-header bg-danger">
-                                <h4>Inactive Users</h4>
-                            </div>
-                            <div class="card-body text-center">
-                                <span th:if="${inactiveUserCount != null}">
-                                    <h4> <span th:text="${inactiveUserCount}"></span></h4>
-                                </span>
-                                <span th:if="${inactiveUserCount == null}">
-                                    <h4>NULL</h4>
-                                </span>
-                            </div>
 
+                    <!-- Inactive Users Card -->
+                    <div class="col-md-4">
+                        <div class="card border-0 shadow-sm h-100">
+                            <div class="card-body p-4">
+                                <div class="d-flex align-items-center mb-3">
+                                    <div class="rounded-circle bg-danger bg-opacity-10 p-3 me-3">
+                                        <i class="fas fa-user-slash fa-lg text-danger"></i>
+                                    </div>
+                                    <h5 class="card-title mb-0">Inactive Users</h5>
+                                </div>
+                                <div class="d-flex align-items-center">
+                                    <h2 class="mb-0 fw-bold" th:text="${inactiveUserCount ?: '0'}">0</h2>
+                                    <span class="badge bg-danger bg-opacity-10 text-danger ms-2 px-3 py-2">
+                                        <i class="fas fa-arrow-down me-1"></i>Inactive
+                                    </span>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
-                <div class="container mt-2">
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="card">
-                                <div class="card-header">
-                                    <h4 class="card-title">User Activity Stats</h4>
+                <!-- Analytics Dashboard Section -->
+                <div class="container-fluid mt-4">
+                    <div class="row g-4">
+                        <!-- User Activity Analytics Card -->
+                        <div class="col-12 col-lg-6">
+                            <div class="card border-0 shadow-sm h-100">
+                                <div class="card-header bg-white border-0 py-3">
+                                    <div class="d-flex align-items-center justify-content-between">
+                                        <h5 class="card-title mb-0 fw-bold">
+                                            <i class="fas fa-chart-pie me-2 text-primary"></i>User Activity Analytics
+                                        </h5>
+                                        <div class="dropdown">
+                                            <button class="btn btn-link btn-sm p-0" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                                <i class="fas fa-ellipsis-v"></i>
+                                            </button>
+                                            <ul class="dropdown-menu dropdown-menu-end shadow">
+                                                <li><a class="dropdown-item" href="#" onclick="downloadChart('pieChart')">
+                                                    <i class="fas fa-download me-2"></i>Export Data</a></li>
+                                                <li><a class="dropdown-item" href="#" onclick="refreshChart('pieChart')">
+                                                    <i class="fas fa-sync-alt me-2"></i>Refresh</a></li>
+                                            </ul>
+                                        </div>
+                                    </div>
                                 </div>
                                 <div class="card-body">
-                                    <canvas id="pieChart"></canvas>
+                                    <div class="chart-container" style="position: relative; height:300px;">
+                                        <canvas id="pieChart"></canvas>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                        <div class="col-md-6 ">
-                            <div class="card">
-                                <div class="card-header">
-                                    <h4 class="card-title">Total User Stats</h4>
+
+                        <!-- Total Users Analytics Card -->
+                        <div class="col-12 col-lg-6">
+                            <div class="card border-0 shadow-sm h-100">
+                                <div class="card-header bg-white border-0 py-3">
+                                    <div class="d-flex align-items-center justify-content-between">
+                                        <h5 class="card-title mb-0 fw-bold">
+                                            <i class="fas fa-users me-2 text-primary"></i>Total Users Overview
+                                        </h5>
+                                        <div class="dropdown">
+                                            <button class="btn btn-link btn-sm p-0" type="button" data-bs-toggle="dropdown">
+                                                <i class="fas fa-ellipsis-v"></i>
+                                            </button>
+                                            <ul class="dropdown-menu dropdown-menu-end">
+                                                <li><a class="dropdown-item" href="#" onclick="downloadChart('pieChart1')">
+                                                    <i class="fas fa-download me-2"></i>Export Data</a></li>
+                                                <li><a class="dropdown-item" href="#" onclick="refreshChart('pieChart1')">
+                                                    <i class="fas fa-sync-alt me-2"></i>Refresh</a></li>
+                                            </ul>
+                                        </div>
+                                    </div>
                                 </div>
                                 <div class="card-body">
-                                    <canvas id="pieChart1"></canvas>
+                                    <div class="chart-container" style="position: relative; height:300px;">
+                                        <canvas id="pieChart1"></canvas>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -188,96 +238,182 @@
                 <div class="container mt-2">
                     <div class="row">
                         <div class="col-md-12">
-                            <div class="card">
-                                <div class="card-header bg-primary">
-                                    <h4 class="card-title">Users List</h4>
+                            <div class="card shadow-sm border-0 rounded-4">
+                                <div class="card-header text-white p-3 d-flex justify-content-between align-items-center rounded-top-4" style="background-color: #0d6efd;">
+                                    <h4 class="card-title mb-0 fw-semibold text-white">
+                                        <i class="fas fa-users me-2"></i>Users Management
+                                    </h4>
+                                    <div class="d-flex gap-2">
+                                        <button class="btn btn-light btn-sm" data-bs-toggle="tooltip" title="Export to Excel">
+                                            <i class="fas fa-file-excel text-primary"></i>
+                                        </button>
+                                        <button class="btn btn-light btn-sm" data-bs-toggle="tooltip" title="Export to PDF">
+                                            <i class="fas fa-file-pdf text-primary"></i>
+                                        </button>
+                                    </div>
                                 </div>
-                                <div class="card-body table-responsive">
-                                    <div class="d-flex justify-content-between mb-3">
-                                        <div class="me-auto">
-                                            <div class="input-group">
-                                                <input type="text" class="form-control" id="search"
-                                                    placeholder="Search..." onkeyup="searchFunction()"
-                                                    onkeypress="return event.keyCode != 13;">
-                                                <button class="btn btn-outline-secondary" type="button"
-                                                    id="button-addon2" onclick="searchFunction()">Search</button>
+                                <div class="card-body">
+                                    <div class="d-flex flex-column flex-md-row gap-2 justify-content-between mb-4">
+                                        <div class="d-flex gap-2">
+                                            <div class="input-group input-group-sm" style="width: 200px;">
+                                                <span class="input-group-text bg-light border-0">
+                                                    <i class="fas fa-search text-muted"></i>
+                                                </span>
+                                                <input type="search" class="form-control border-0 bg-light" 
+                                                       id="search" placeholder="Search users..." 
+                                                       onkeyup="searchFunction()">
                                             </div>
-
+                                            <div class="dropdown">
+                                                <button class="btn btn-primary btn-sm dropdown-toggle" type="button" id="filterDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                                                    <i class="fas fa-filter"></i> Filter
+                                                </button>
+                                                <div class="dropdown-menu p-3" style="min-width: 250px;">
+                                                    <h6 class="dropdown-header">Filter By</h6>
+                                            
+                                                    <div class="mb-3">
+                                                        <label class="form-label">Status</label>
+                                                        <select class="form-select form-select-sm" id="statusFilter" onchange="applyFilters()">
+                                                            <option value="">All</option>
+                                                            <option value="Active">Active</option>
+                                                            <option value="Inactive">Inactive</option>
+                                                        </select>
+                                                    </div>
+                                            
+                                                    <div class="mb-3">
+                                                        <label class="form-label">Role</label>
+                                                        <select class="form-select form-select-sm" id="roleFilter" onchange="applyFilters()">
+                                                            <option value="">All</option>
+                                                            <option value="ROLE_ADMIN">Admin</option>
+                                                            <option value="ROLE_USER">User</option>
+                                                            <option value="ROLE_MODERATOR">Moderator</option>
+                                                        </select>
+                                                    </div>
+                                            
+                                                    <div class="mb-3">
+                                                        <label class="form-label">Sort By</label>
+                                                        <select class="form-select form-select-sm" id="sortBy" onchange="applyFilters()">
+                                                            <option value="">None</option>
+                                                            <option value="username">Username</option>
+                                                            <option value="email">Email</option>
+                                                            <option value="created">Created Date</option>
+                                                        </select>
+                                                    </div>
+                                            
+                                                    <div class="d-flex justify-content-between">
+                                                        <button class="btn btn-sm btn-secondary" onclick="resetAllFilters()">Reset</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            
+                                                
                                         </div>
-                                        <div class="ms-auto">
-                                            <select class="form-select" id="inlineSelectOptions"
-                                                aria-label="Default select example">
+                                        <div class="d-flex gap-2 align-items-center">
+                                            <label class="text-muted small">Show:</label>
+                                            <select class="form-select form-select-sm" style="width: 70px;">
                                                 <option value="10">10</option>
-                                                <option value="20">20</option>
-                                                <option value="50" selected>50</option>
+                                                <option value="25">25</option>
+                                                <option value="50">50</option>
+                                                <option value="100">100</option>
                                             </select>
                                         </div>
                                     </div>
-                                    <table class="table table-striped table-responsive table-hover" id="userTable">
-                                        <thead>
-                                            <tr>
-                                                <th class="text-nowrap">S.N.</th>
-                                                <th class="text-nowrap">ID</th>
-                                                <th class="text-nowrap">Username</th>
-                                                <th class="text-nowrap">Email</th>
-                                                <th class="text-nowrap">Roles</th>
-                                                <th class="text-nowrap">Created At</th>
-                                                <th class="text-nowrap">Last Login</th>
-                                                <th class="text-nowrap">Status</th>
-                                                <th class="text-nowrap">Actions</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            <tr th:each="user, userStat : ${users}">
-                                                <td th:text="${userStat.count}">S.N.</td>
-                                                <td th:text="${user.id}">ID</td>
-                                                <td th:text="${user.username}">Username</td>
-                                                <td th:text="${user.email}">Email</td>
-                                                <td><button type="button" class="btn btn-sm btn-primary" disabled
-                                                        th:text="${#strings.listJoin(user.roles, ', ')}">Roles</button>
-                                                </td>
-                                                <td th:text="${#temporals.format(user.createdAt, 'yyyy-MM-dd HH:mm')}">
-                                                    Created</td>
-                                                <td
-                                                    th:text="${user.updatedAt != null ? #temporals.format(user.updatedAt, 'yyyy-MM-dd HH:mm') : '-'}">
-                                                    Updated</td>
-                                                <td><span class="badge rounded-pill"
-                                                        th:classappend="${user.isActive ? 'bg-success' : 'bg-danger'}"
-                                                        th:text="${user.isActive ? 'Active' : 'Inactive'}">Status</span>
-                                                </td>
-                                                <td>
-                                                    <div class="btn-group gap-1">
-                                                        <button type="button" class="btn btn-sm btn-info"
-                                                            data-bs-toggle="modal" data-bs-target="#changePasswordModal"
-                                                            th:attr="data-user-id=${user.id}">Change Password</button>
-                                                        <button type="button" class="btn btn-sm"
-                                                            th:classappend="${user.isActive ? 'btn-danger' : 'btn-success'}"
-                                                            data-bs-toggle="modal" data-bs-target="#activateModal"
-                                                            th:attr="data-user-id=${user.id}"
-                                                            th:text="${user.isActive ? 'Inactivate' : 'Activate'}">Change
-                                                            Status</button>
-                                                    </div>
-                                                </td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                    <nav aria-label="User pagination">
-                                        <ul class="pagination pagination-circle justify-content-center">
-                                            <li class="page-item">
-                                                <a class="page-link" href="#" aria-label="Previous">
-                                                    <i class="fas fa-chevron-left"></i>
-                                                </a>
-                                            </li>
-                                            <li class="page-item active"><a class="page-link" href="#">1</a></li>
-                                            <li class="page-item"><a class="page-link" href="#">2</a></li>
-                                            <li class="page-item"><a class="page-link" href="#">3</a></li>
-                                            <li class="page-item">
-                                                <a class="page-link" href="#" aria-label="Next">
-                                                    <i class="fas fa-chevron-right"></i>
-                                                </a>
-                                            </li>
-                                        </ul>
-                                    </nav>
+
+                                    <div class="table-responsive">
+                                        <table class="table table-hover align-middle" id="userTable">
+                                            <thead class="bg-light">
+                                                <tr>
+                                                    <th class="text-nowrap px-3 py-3 border-0">
+                                                        <input type="checkbox" class="form-check-input">
+                                                    </th>
+                                                    <th class="text-nowrap px-3 py-3 border-0">UserId</th>
+                                                    <th class="text-nowrap px-3 py-3 border-0">User Info</th>
+                                                    <th class="text-nowrap px-3 py-3 border-0">Role</th>
+                                                    <th class="text-nowrap px-3 py-3 border-0">Created</th>
+                                                    <th class="text-nowrap px-3 py-3 border-0">Last Login</th>
+                                                    <th class="text-nowrap px-3 py-3 border-0">Status</th>
+                                                    <th class="text-nowrap px-3 py-3 border-0">Actions</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr th:each="user, userStat : ${users}" th:attr="data-status=${user.isActive ? 'active' : 'inactive'}, data-role=${user.roles[0]}">
+                                                    <td class="px-3">
+                                                        <input type="checkbox" class="form-check-input">
+                                                    </td>
+                                                    <td class="px-3" th:text="${user.id}">UserId</td>
+                                                    <td class="px-3">
+                                                        <div class="d-flex align-items-center">
+                                                            <div class="avatar-circle me-3">
+                                                                <span th:text="${#strings.substring(user.username,0,1).toUpperCase()}"
+                                                                      class="avatar-text"></span>
+                                                            </div>
+                                                            <div>
+                                                                <h6 class="mb-0" th:text="${user.username}">Username</h6>
+                                                                <small class="text-muted" th:text="${user.email}">Email</small>
+                                                            </div>
+                                                        </div>
+                                                    </td>
+                                                    <td class="px-3">
+                                                        <span class="badge rounded-pill bg-primary-subtle text-primary" 
+                                                              th:each="role : ${user.roles}" th:text="${role}">Role</span>
+                                                    </td>
+                                                    <td class="px-3">
+                                                        <span th:text="${#temporals.format(user.createdAt, 'MMM dd, yyyy')}">Created</span>
+                                                    </td>
+                                                    <td class="px-3">
+                                                        <span th:text="${user.updatedAt != null ? #temporals.format(user.updatedAt, 'MMM dd, yyyy HH:mm') : '-'}">
+                                                            Last Login
+                                                        </span>
+                                                    </td>
+                                                    <td class="px-3">
+                                                        <span class="badge rounded-pill"
+                                                              th:classappend="${user.isActive ? 'bg-success-subtle text-success' : 'bg-danger-subtle text-danger'}"
+                                                              th:text="${user.isActive ? 'Active' : 'Inactive'}">Status</span>
+                                                    </td>
+                                                    <td class="px-3">
+                                                        <div class="dropdown">
+                                                            <button class="btn btn-light btn-sm" data-bs-toggle="dropdown">
+                                                                <i class="fas fa-ellipsis-vertical"></i>
+                                                            </button>
+                                                            <ul class="dropdown-menu dropdown-menu-end shadow">
+                                                                <li>
+                                                                    <button class="dropdown-item" data-bs-toggle="modal" 
+                                                                            data-bs-target="#changePasswordModal" th:attr="data-user-id=${user.id}">
+                                                                        <i class="fas fa-key me-2"></i>Change Password
+                                                                    </button>
+                                                                </li>
+                                                                <li>
+                                                                    <button class="dropdown-item" data-bs-toggle="modal" 
+                                                                            data-bs-target="#activateModal" th:attr="data-user-id=${user.id}">
+                                                                        <i class="fas me-2" th:class="${user.isActive ? 'fas fa-user-slash me-2' : 'fas fa-user-check me-2'}"></i>
+                                                                        <span th:text="${user.isActive ? 'Deactivate' : 'Activate'}">Toggle Status</span>
+                                                                    </button>
+                                                                </li>
+                                                            </ul>
+                                                        </div>
+                                                    </td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+
+                                    <div class="d-flex justify-content-between align-items-center mt-4">
+                                        <div class="text-muted small">
+                                            Showing <span>1</span> to <span>10</span> of <span>50</span> entries
+                                        </div>
+                                        <nav aria-label="User pagination">
+                                            <ul class="pagination pagination-sm mb-0">
+                                                <li class="page-item disabled">
+                                                    <a class="page-link" href="#"><i class="fas fa-chevron-left"></i></a>
+                                                </li>
+                                                <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                                                <li class="page-item"><a class="page-link" href="#">2</a></li>
+                                                <li class="page-item"><a class="page-link" href="#">3</a></li>
+                                                <li class="page-item">
+                                                    <a class="page-link" href="#"><i class="fas fa-chevron-right"></i></a>
+                                                </li>
+                                            </ul>
+                                        </nav>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -298,10 +434,11 @@
                                 <p>Are you sure you want to <span id="activateModalAction"></span> this user?</p>
                             </div>
                             <div class="modal-footer">
+                                <button type="button" class="btn btn-danger" data-bs-dismiss="modal">No</button>
                                 <form id="statusChangeForm" method="post">
-                                    <button type="submit" class="btn btn-primary">Yes</button>
+                                    <button type="submit" class="btn btn-success">Yes</button>
                                 </form>
-                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">No</button>
+                                
                             </div>
                         </div>
                     </div>
@@ -358,6 +495,8 @@
     </div>
     <!-- Bootstrap JS Bundle with Popper -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Bootstrap JS (includes Popper) -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function () {
 
@@ -470,13 +609,15 @@
                     const userId = button.getAttribute('data-user-id');
 
                     // Only proceed if this is a status change button (not password button)
-                    if (button.classList.contains('btn-danger') || button.classList.contains('btn-success')) {
-                        // Determine action text (Activate or Inactivate)
-                        const actionText = button.textContent;
+                    // Get status text from the button's span element
+                    const statusSpan = button.querySelector('span');
+                    if (statusSpan) {
+                        // The action will be the opposite of the current status text (Activate/Deactivate)
+                        const actionText = statusSpan.textContent.toLowerCase();
 
                         // Update the modal's content
                         const actionSpan = document.getElementById('activateModalAction');
-                        actionSpan.textContent = actionText.toLowerCase();
+                        actionSpan.textContent = actionText;
 
                         // Update the form action
                         const form = document.getElementById('statusChangeForm');
@@ -584,22 +725,32 @@
          * If it does, the row is displayed, otherwise it is hidden.
          */
         function searchFunction() {
-            const searchInput = document.getElementById("search");
-            const filter = searchInput.value.toUpperCase();
+            const input = document.getElementById("search");
+            const filter = input.value.toLowerCase();
             const table = document.getElementById("userTable");
-            const rows = table.getElementsByTagName("tr");
-            for (let i = 0; i < rows.length; i++) {
-                const firstCell = rows[i].getElementsByTagName("td")[0];
-                if (firstCell) {
-                    const textValue = firstCell.textContent || firstCell.innerText;
-                    if (textValue.toUpperCase().includes(filter)) {
-                        rows[i].style.display = "";
+            const rows = table.getElementsByTagName("tbody")[0].getElementsByTagName("tr");
+
+            for (let row of rows) {
+                const userInfoCell = row.querySelector("td:nth-child(3)"); // Get user info cell
+                if (userInfoCell) {
+                    const username = userInfoCell.querySelector("h6").textContent;
+                    const email = userInfoCell.querySelector("small").textContent;
+                    const roleCell = row.querySelector("td:nth-child(4)");
+                    const role = roleCell ? roleCell.textContent : '';
+                    const userId = row.querySelector("td:nth-child(2)").textContent;
+
+                    if (username.toLowerCase().includes(filter) || 
+                        email.toLowerCase().includes(filter) || 
+                        role.toLowerCase().includes(filter) ||
+                        userId.includes(filter)) {
+                        row.style.display = "";
                     } else {
-                        rows[i].style.display = "none";
+                        row.style.display = "none";
                     }
                 }
             }
         }
+
         const changePasswordModal = document.getElementById('changePasswordModal');
 
         changePasswordModal.addEventListener('show.bs.modal', function (event) {
@@ -710,6 +861,54 @@
                 confirmPasswordError.style.display = 'block';
             }
         }
+        function applyFilters() {
+                                                    const status = document.getElementById("statusFilter").value.toLowerCase();
+                                                    const role = document.getElementById("roleFilter").value.toLowerCase();
+                                                    const sortBy = document.getElementById("sortBy").value;
+                                                
+                                                    const rows = document.querySelectorAll("#userTable tbody tr");
+                                                
+                                                    rows.forEach(row => {
+                                                        const rowStatus = row.getAttribute("data-status").toLowerCase();
+                                                        const rowRole = row.getAttribute("data-role").toLowerCase();
+                                                
+                                                        const matchesStatus = !status || rowStatus === status;
+                                                        const matchesRole = !role || rowRole === role;
+                                                
+                                                        row.style.display = (matchesStatus && matchesRole) ? "" : "none";
+                                                    });
+                                                
+                                                    if (sortBy) {
+                                                        sortTableByColumn(sortBy);
+                                                    }
+                                                }
+                                                
+                                                function sortTableByColumn(columnKey) {
+                                                    const tbody = document.querySelector("#userTable tbody");
+                                                    const rows = Array.from(tbody.querySelectorAll("tr"))
+                                                        .filter(row => row.style.display !== "none");
+                                                
+                                                    const columnIndex = {
+                                                        username: 1,
+                                                        email: 1,
+                                                        created: 3
+                                                    }[columnKey];
+                                                
+                                                    rows.sort((a, b) => {
+                                                        const getText = (row, index) => row.children[index].innerText.trim().toLowerCase();
+                                                        return getText(a, columnIndex).localeCompare(getText(b, columnIndex));
+                                                    });
+                                                
+                                                    rows.forEach(row => tbody.appendChild(row));
+                                                }
+                                                
+                                                function resetAllFilters() {
+                                                    document.getElementById("statusFilter").value = "";
+                                                    document.getElementById("roleFilter").value = "";
+                                                    document.getElementById("sortBy").value = "";
+                                                    applyFilters();
+                                                }
+                                               
     </script>
     <script>
         document.getElementById('menu-toggle').addEventListener('click', function () {
