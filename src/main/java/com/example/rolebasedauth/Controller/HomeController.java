@@ -83,6 +83,11 @@ public class HomeController {
         return "custom-login";
     }
 
+    @GetMapping("/page-not-found")
+    public String homepage() {
+        return "404";
+    }
+
     @PostMapping("/login1")
     public String loginUser(@RequestParam(name = "username", required = true) String username,
             @RequestParam("password") String password,
@@ -100,7 +105,6 @@ public class HomeController {
             redirectAttributes.addFlashAttribute("captchaErrorMessage", e.getMessage());
             return "redirect:/custom-login"; // return to login page
         }
-
         // Find user by username
         User user = userRepository.findByUsername(username)
                 .orElse(null);
@@ -111,21 +115,24 @@ public class HomeController {
                     "The username or password you have enetered is incorrect. Please try again.");
             return "redirect:/custom-login?error=true";
         }
-
         // Get the user's roles from the database
         Set<ERole> userRoles = user.getRoles().stream()
                 .map(Role::getName)
                 .collect(Collectors.toSet());
-
         // Get the allowed roles from the database
         Set<ERole> allowedRoles = Set.of(ERole.ROLE_USER, ERole.ROLE_ADMIN, ERole.ROLE_MODERATOR);
-
         // Check if the user's roles are present in the allowed roles
         if (!allowedRoles.containsAll(userRoles)) {
             redirectAttributes.addFlashAttribute("errorMessage",
                     "You do not have the required roles to access this system");
             model.addAttribute("error", "You do not have the required roles to access this system");
             return "custom-login?error=true";
+        }
+        // Check if the user is active
+        if (!user.getIsActive()) {
+            redirectAttributes.addFlashAttribute("errorMessage",
+                    "Your account is not active. Please contact the administrator.");
+            return "redirect:/custom-login?error=true";
         }
 
         // Authenticate the user
@@ -136,7 +143,6 @@ public class HomeController {
         // If authentication is successful, set the authentication in the
         // SecurityContext
         SecurityContextHolder.getContext().setAuthentication(auth);
-
         // Update last login
         userService.updateLastLogin(username);
         // If login success
@@ -265,9 +271,10 @@ public class HomeController {
     }
 
     @GetMapping("/admin/dashboard")
-    public String admin_dashboard(Model model, Authentication authentication) {
-        List<UserDto> users = userService.getAllUsers();
-        model.addAttribute("users", users);
+    public String admin_dashboard( Authentication authentication,Model model) {
+        
+        List<UserDto> allUsers = userService.getAllUsers();
+        model.addAttribute("users", allUsers);
         // Add active user count to model
         addInactiveUserCountToModel(model);
         addTotalUserCountToModel(model);
