@@ -1,39 +1,80 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="404 Page Not Found">
     <title>404 Not Found</title>
     <link th:href="@{/images/favicon.ico?v=1}" rel="shortcut icon" type="image/x-icon">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link th:href="@{/css/bootstrap_5.3.2.min.css}" rel="stylesheet">
+    <link th:href="@{/css/fontawesome_6.7.2.min.css}" rel="stylesheet">
+
     <style>
-        body {
-            background-color: #f8f9fa;
+        :root {
+            --primary-color: #2563eb;
+            --text-color: #1f2937;
         }
 
-        .container {
+        body {
+            background-color: #f8f9fa;
+            color: var(--text-color);
+            font-family: system-ui, -apple-system, sans-serif;
+        }
+
+        .error-container {
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            height: 100vh;
+            min-height: 100vh;
+            padding: 1rem;
+            text-align: center;
         }
 
         .not-found {
-            max-width: 100%;
+            max-width: 400px;
             height: auto;
+            margin-bottom: 2rem;
+            filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.1));
+            animation: float 6s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            transition: transform 0.2s;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
+        }
+
+        @media (prefers-reduced-motion) {
+            .not-found {
+                animation: none;
+            }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <img src="https://i.imgur.com/qIufhof.png" class="not-found" alt="404 Not Found">
-        <h1 class="display-1">404 Not Found</h1>
-        <p class="lead" th:text="${errorMessage}">The page you are looking for might have been removed, had its name changed, or is temporarily unavailable.</p>
-        <a class="btn btn-primary mt-3" th:href="@{/homepage}">Return to Homepage</a>
-    </div>
+    <main class="error-container">
+        <img th:src="@{/images/404.png}" class="not-found" alt="404 Light Bulb Not Connected Illustration" width="100%" height="100vh" >
+        <h1 class="display-4 fw-bold mb-3">Oops! Page Not Found</h1>
+        <p class="lead mb-4" th:text="${errorMessage}">The page you are looking for might have been removed, had its name changed, or is temporarily unavailable.</p>
+        <a class="btn btn-primary" th:href="@{/homepage}">
+            <i class="fas fa-home me-2"></i>
+            Back to Homepage
+        </a>
+    </main>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+    <script th:src="@{/js/bootstrap_5.3.2_bundle.min.js}"></script>
 </body>
 </html>
-
